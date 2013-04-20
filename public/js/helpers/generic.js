@@ -24,4 +24,12 @@
     });
   };
 
+  window.cl = function(crap) {
+    return console.debug(crap);
+  };
+
+  window.nop = function(e) {
+    return e.preventDefault();
+  };
+
 }).call(this);

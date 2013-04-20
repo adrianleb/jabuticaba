@@ -1,12 +1,18 @@
 
 <h1>Marcel</h1>
 
-<a id="open-room" href="#">Open Room</a>
+<a id="open-room" href="#">Open Room</a> === 
 <a id="join-room" href="#">Join Room</a>
+<br/>
 
+<a id="generate-sound" href="#">Generate sound</a>
+<br/>
+
+New message:<br>
 <input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>
 <br/>
 
+Messages:<br>
 <div id="messages">
 </div>
 

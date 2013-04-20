@@ -16,15 +16,18 @@
     Marcel.prototype.el = "body";
 
     Marcel.prototype.events = {
-      '#send click': 'send',
-      '#open-room': 'openRoom',
-      '#join-room': 'joinRoom'
+      'click #send': 'send',
+      'click #open-room': 'openRoom',
+      'click #join-room': 'joinRoom',
+      'click #generate-sound': 'generateSound'
     };
+
+    Marcel.prototype.roomName = 'room-9';
 
     Marcel.prototype.initialize = function() {
       var _this = this;
       console.debug('init marcelzz');
-      this.room = new DataChannel('room');
+      this.room = new DataChannel();
       this.room.onopen = function(user_id) {
         return console.log('onopen: ' + user_id);
       };
@@ -32,26 +35,59 @@
         return console.log('onUserLeft: ' + user_id);
       };
       this.room.onmessage = function(msg) {
-        return _this.$('#messages').append(msg + "<br/>");
+        var d;
+        _this.$('#messages').append(msg);
+        d = Base64Binary.decodeArrayBuffer(msg);
+        return _this.incommingContext.decodeAudioData(msg, function(buffer) {
+          return this.incommingBuffer = buffer;
+        });
       };
-      return this.render();
+      this.render();
+      this.incommingContext = new webkitAudioContext();
+      this.outputContext = new webkitAudioContext();
+      return this.incommingBuffer = null;
     };
 
     Marcel.prototype.render = function() {
-      console.debug('rendorz');
-      return this.$el.find('#container').append(this.template());
+      return this.$el.append(this.template());
     };
 
-    Marcel.prototype.send = function() {
-      return this.room.send(this.$('#msg').val());
+    Marcel.prototype.send = function(e) {
+      nop(e);
+      cl('sending: ' + $('#msg').val());
+      return this.room.send($('#msg').val());
     };
 
-    Marcel.prototype.openRoom = function() {
-      return this.room.open('room');
+    Marcel.prototype.openRoom = function(e) {
+      nop(e);
+      return this.room.open(this.roomName);
     };
 
-    Marcel.prototype.joinRoom = function() {
-      return this.room.connect('room');
+    Marcel.prototype.joinRoom = function(e) {
+      nop(e);
+      return this.room.connect(this.roomName);
+    };
+
+    Marcel.prototype.generateSound = function(e) {
+      var _this = this;
+      nop(e);
+      cl('nonono: 99999');
+      this.o = this.outputContext.createOscillator();
+      this.js = this.outputContext.createScriptProcessor(256, 1, 1);
+      this.o.frequency.value = 440;
+      this.o.connect(this.js);
+      this.js.onaudioprocess = function(e) {
+        var msg;
+        cl('onaudioprocess');
+        msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer);
+        cl('sending: ' + msg);
+        return _this.room.send(msg);
+      };
+      this.o.start(0);
+      this.g = this.outputContext.createGainNode();
+      this.js.connect(this.g);
+      this.g.gain = 0;
+      return this.g.connect(this.outputContext.destination);
     };
 
     return Marcel;
