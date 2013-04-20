@@ -83,7 +83,7 @@ class AudioBoss
         @scales[scale][i+(j*l)] = Math.pow(2, ((v + (12*j))-69)/12) * 440
 
   initEffects: ->
-    
+    @source = @oscGain
     if not @source
       return "Oh no!"
 
@@ -100,8 +100,8 @@ class AudioBoss
     @effects['delay'] = new @tuna.Delay(
       feedback: 0
       delayTime: 250
-      wetLevel: 0.5
-      dryLevel: 0.5
+      wetLevel: 1
+      dryLevel: 1
       bypass: true
     )
 
@@ -121,7 +121,7 @@ class AudioBoss
 
     _.each @effects, (effect) =>
       @source.connect(effect.input)
-      effect.connect(@sourceGainNode.input)
+      effect.connect(@sourceGainNode)
 
   silenceEffects: ->
 
@@ -135,15 +135,15 @@ class AudioBoss
       @effects[effectName].drive = v1
       @effects[effectName].curveAmount = v2
 
-    if effectName is 'overdrive'
+    if effectName is 'delay'
       @effects[effectName].bypass = false
       @effects[effectName].feedback = v1
-      @effects[effectName].delayTime = v2
+      @effects[effectName].delayTime = v2*1000
 
     if effectName is 'chorus'
       @effects[effectName].bypass = false
       @effects[effectName].rate = v1*20
-      @effects[effectName].feedback = v2
+      @effects[effectName].feedback = Math.min(v2, 0.95)
 
     if effectName is 'tremolo'
       @effects[effectName].bypass = false

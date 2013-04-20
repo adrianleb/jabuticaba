@@ -103,6 +103,7 @@
 
     AudioBoss.prototype.initEffects = function() {
       var _this = this;
+      this.source = this.oscGain;
       if (!this.source) {
         return "Oh no!";
       }
@@ -117,8 +118,8 @@
       this.effects['delay'] = new this.tuna.Delay({
         feedback: 0,
         delayTime: 250,
-        wetLevel: 0.5,
-        dryLevel: 0.5,
+        wetLevel: 1,
+        dryLevel: 1,
         bypass: true
       });
       this.effects['chorus'] = new this.tuna.Chorus({
@@ -135,7 +136,7 @@
       });
       return _.each(this.effects, function(effect) {
         _this.source.connect(effect.input);
-        return effect.connect(_this.sourceGainNode.input);
+        return effect.connect(_this.sourceGainNode);
       });
     };
 
@@ -156,15 +157,15 @@
         this.effects[effectName].drive = v1;
         this.effects[effectName].curveAmount = v2;
       }
-      if (effectName === 'overdrive') {
+      if (effectName === 'delay') {
         this.effects[effectName].bypass = false;
         this.effects[effectName].feedback = v1;
-        this.effects[effectName].delayTime = v2;
+        this.effects[effectName].delayTime = v2 * 1000;
       }
       if (effectName === 'chorus') {
         this.effects[effectName].bypass = false;
         this.effects[effectName].rate = v1 * 20;
-        this.effects[effectName].feedback = v2;
+        this.effects[effectName].feedback = Math.min(v2, 0.95);
       }
       if (effectName === 'tremolo') {
         this.effects[effectName].bypass = false;
