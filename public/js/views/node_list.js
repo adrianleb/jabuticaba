@@ -15,13 +15,28 @@
 
     NodeList.prototype.el = "#node-list";
 
+    NodeList.prototype.activeNodes = [
+      {
+        id: '1',
+        alias: 'ur mom'
+      }, {
+        id: '1',
+        alias: 'ur mom'
+      }, {
+        id: '1',
+        alias: 'ur mom'
+      }
+    ];
+
     NodeList.prototype.initialize = function() {
       console.debug('initialize nodes wrap');
       return this.render();
     };
 
     NodeList.prototype.render = function() {
-      return this.$el.append(this.template());
+      return this.$el.append(this.template({
+        activeNodes: this.activeNodes
+      }));
     };
 
     return NodeList;
