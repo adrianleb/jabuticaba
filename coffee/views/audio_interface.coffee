@@ -12,6 +12,8 @@ class Jabuticaba.Views.AudioInterface extends Backbone.View
 
     "mousemove #audio-modulator" : "modulatorDragger"
     "mousedown #audio-modulator" : "modulatorDragger"
+
+    
   initialize: ->
     console.debug('init audio interface')
     @render()
