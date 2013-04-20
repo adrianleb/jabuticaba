@@ -38,7 +38,7 @@ JST['audio_interface/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
-      __out.push('<p>IM AN AUDIO INTERFACE, LOOK AT ME IM SO SEXYyyy</p>');
+      __out.push('<p>IM AN AUDIO INTERFACE, LOOK AT ME IM SO SEXYyyy</p>\n\n<div class="audio_source"></div>\n<div class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>');
     
     }).call(this);
     
