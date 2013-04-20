@@ -12,17 +12,33 @@
       'aMinor': [33, 35, 36, 38, 40, 41, 43]
     };
 
+    AudioBoss.prototype.source = false;
+
     AudioBoss.prototype.initialize = function() {
       this.context = new webkitAudioContext();
+      this.initOutput();
       this.initGenerators();
+      this.initEffects();
       this.initExtendedScale('aMinor');
       return this.initEvents();
     };
 
+    AudioBoss.prototype.initOutput = function() {
+      this.outGainNode = this.context.createGainNode();
+      this.outGainNode.gain.value = 0.7;
+      this.outGainNode.connect(this.context.destination);
+      this.sourceGainNode = this.context.createGainNode();
+      this.sourceGainNode.gain.value = 0.5;
+      return this.sourceGainNode.connect(this.outGainNode);
+    };
+
     AudioBoss.prototype.initGenerators = function() {
+      this.oscPanner = this.context.createPanner();
+      this.oscPanner.setPosition(-0.7, 0, 0);
       this.oscGain = this.context.createGainNode();
       this.oscGain.gain.value = 0;
-      this.oscGain.connect(this.context.destination);
+      this.oscGain.connect(this.oscPanner);
+      this.oscPanner.connect(this.outGainNode);
       this.osc1 = this.context.createOscillator();
       this.osc1.type = 0;
       this.osc1.connect(this.oscGain);
@@ -87,6 +103,9 @@
 
     AudioBoss.prototype.initEffects = function() {
       var _this = this;
+      if (!this.source) {
+        return "Oh no!";
+      }
       this.tuna = new Tuna(this.context);
       this.effects['overdrive'] = new this.tuna.Overdrive({
         outputGain: 0.3,
@@ -116,7 +135,7 @@
       });
       return _.each(this.effects, function(effect) {
         _this.source.connect(effect.input);
-        return effect.connect(_this.context.destination);
+        return effect.connect(_this.sourceGainNode.input);
       });
     };
 

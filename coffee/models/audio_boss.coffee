@@ -5,21 +5,38 @@ class AudioBoss
   scales: 
     'aMinor': [33, 35, 36, 38, 40, 41, 43]
 
+  source: false
+
   initialize: ->
     @context = new webkitAudioContext()
     
+    @initOutput()
     @initGenerators()
-    #@initEffects()
+    @initEffects()
 
     @initExtendedScale('aMinor')
     
     @initEvents()
 
+  initOutput: ->
+    @outGainNode = @context.createGainNode()
+    @outGainNode.gain.value = 0.7
+    @outGainNode.connect(@context.destination)
+
+    @sourceGainNode = @context.createGainNode()
+    @sourceGainNode.gain.value = 0.5
+    @sourceGainNode.connect(@outGainNode)
+
   initGenerators: ->
+
+    @oscPanner = @context.createPanner()
+    @oscPanner.setPosition(-0.7,0,0)
 
     @oscGain = @context.createGainNode()
     @oscGain.gain.value = 0
-    @oscGain.connect(@context.destination)
+    @oscGain.connect(@oscPanner)
+    
+    @oscPanner.connect(@outGainNode)
 
     @osc1 = @context.createOscillator()
     @osc1.type = 0
@@ -66,6 +83,9 @@ class AudioBoss
         @scales[scale][i+(j*l)] = Math.pow(2, ((v + (12*j))-69)/12) * 440
 
   initEffects: ->
+    
+    if not @source
+      return "Oh no!"
 
     @tuna = new Tuna(@context)
 
@@ -101,7 +121,7 @@ class AudioBoss
 
     _.each @effects, (effect) =>
       @source.connect(effect.input)
-      effect.connect(@context.destination)
+      effect.connect(@sourceGainNode.input)
 
   silenceEffects: ->
 
