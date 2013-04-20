@@ -3,7 +3,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  ShufflerDoc.Routers.Main = (function(_super) {
+  Jabuticaba.Routers.Main = (function(_super) {
 
     __extends(Main, _super);
 
@@ -15,13 +15,18 @@
 
     Main.prototype.routes = {
       '': 'home',
+      'marcel': 'marcel',
       '*other': 'home'
     };
 
-    Main.prototype.home = function(key) {
-      if (!(this.view instanceof ShufflerDoc.Views.Home)) {
-        return this.view = new ShufflerDoc.Views.Home(key);
+    Main.prototype.home = function() {
+      if (!(this.view instanceof Jabuticaba.Views.Home)) {
+        return this.view = new Jabuticaba.Views.Home();
       }
+    };
+
+    Main.prototype.marcel = function() {
+      return this.view = new Jabuticaba.Views.Marcel();
     };
 
     return Main;

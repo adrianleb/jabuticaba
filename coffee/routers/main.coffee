@@ -1,14 +1,15 @@
-class ShufflerDoc.Routers.Main extends Backbone.Router
+class Jabuticaba.Routers.Main extends Backbone.Router
 
   view: null
 
   routes:
     '': 'home'
+    'marcel': 'marcel'
     '*other': 'home'
 
+  home: ->
+    unless @view instanceof Jabuticaba.Views.Home
+      @view = new Jabuticaba.Views.Home()
 
-
-  home: (key) ->
-    unless @view instanceof ShufflerDoc.Views.Home
-      @view = new ShufflerDoc.Views.Home(key)
-
+  marcel: ->
+    @view = new Jabuticaba.Views.Marcel()
