@@ -8,7 +8,8 @@
     Routers: {},
     init: function() {
       this.Routers.main = new Jabuticaba.Routers.Main();
-      return Backbone.history.start();
+      Backbone.history.start();
+      return AudioBoss.initialize();
     }
   };
 
