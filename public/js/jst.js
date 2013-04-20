@@ -38,8 +38,7 @@ JST['audio_interface/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
-    
-      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n<div class="audio_output"></div>');
+      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n\n<div class="audio_output"></div>');
     
     }).call(this);
     
@@ -134,8 +133,7 @@ JST['marcel'] = function(__obj) {
   }
   (function() {
     (function() {
-    
-      __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a> === \n<a id="join-room" href="#">Join Room</a>\n<br/>\n\n<a id="generate-sound" href="#">Generate sound</a>\n<br/>\n\nNew message:<br>\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\nMessages:<br>\n<div id="messages">\n</div>\n\n');
+      __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a> === \n<a id="join-room" href="#">Join Room</a>\n<br/>\n\n<a id="generate-sound" href="#">Generate sound</a>\n<br/>\n\nNew message:<br>\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\nMessages:<br>\n<div id="messages">\n</div>\n\n\n');
     
     }).call(this);
     
