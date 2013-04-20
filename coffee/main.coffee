@@ -1,4 +1,4 @@
-window.ShufflerDoc =
+window.Jabuticaba =
   Models: {}
   Collections: {}
   Views: {}
@@ -6,8 +6,8 @@ window.ShufflerDoc =
 
   init: ->
     # Initialize Routers
-    @Routers.main = new ShufflerDoc.Routers.Main()
+    @Routers.main = new Jabuticaba.Routers.Main()
     Backbone.history.start()
 
 $ ->
-  ShufflerDoc.init()
+  Jabuticaba.init()
