@@ -68,12 +68,14 @@
         x: eX / elW,
         y: eY / elH
       };
-      this.$(e.currentTarget).find('.audio_module_point').css({
-        top: (coord.y * 100) + "%",
-        left: (coord.x * 100) + "%"
-      });
-      if (callback != null) {
-        return callback(coord);
+      if (coord.x <= 1 && coord.y <= 1) {
+        this.$(e.currentTarget).find('.audio_module_point').css({
+          top: (coord.y * 100) + "%",
+          left: (coord.x * 100) + "%"
+        });
+        if (callback != null) {
+          return callback(coord);
+        }
       }
     };
 
