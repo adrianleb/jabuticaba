@@ -38,7 +38,8 @@ JST['audio_interface/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
-      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n\n<div class="audio_output"></div>');
+    
+      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n\n<label for="instrument-picker">Sound</label>\n<select id="instrument-picker">\n  <option>brom</option>\n  <option>blar</option>\n  <option>bumm</option>\n  <option>piip</option>\n</select>\n\n<label for="octave-picker">Octavez</label>\n<select id="octave-picker">\n  <option>0</option>\n  <option>1</option>\n  <option>2</option>\n  <option selected>3</option>\n  <option>4</option>\n  <option>5</option>\n  <option>6</option>\n  <option>7</option>\n</select>\n\n<div class="audio_output"></div>');
     
     }).call(this);
     
@@ -133,6 +134,7 @@ JST['marcel'] = function(__obj) {
   }
   (function() {
     (function() {
+    
       __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a> === \n<a id="join-room" href="#">Join Room</a>\n<br/>\n\n<a id="generate-sound" href="#">Generate sound</a>\n<br/>\n\nNew message:<br>\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\nMessages:<br>\n<div id="messages">\n</div>\n\n\n');
     
     }).call(this);

@@ -13,13 +13,38 @@ class Jabuticaba.Views.AudioInterface extends Backbone.View
     "mousemove #audio-modulator" : "modulatorDragger"
     "mousedown #audio-modulator" : "modulatorDragger"
 
+    "change #instrument-picker" : "pickInstrument" 
+    "change #octave-picker" : "pickOctave" 
     
   initialize: ->
     console.debug('init audio interface')
     @render()
+    @heroicOn('#audio-generator', 'red', 50, 300)
+    @heroicOn('.audio_source', 'green', 40, 310)
+    @heroicOn('.audio_output', 'green', 51, 289)
+
+  heroicOn: (el, cls, t1, t2) ->
+    $(el).addClass(cls)
+    setTimeout((=>
+      @heroicOff(el, cls, t1, t2)
+    ), t1)
+
+  heroicOff: (el, cls, t1, t2) ->
+    $(el).removeClass(cls)
+    setTimeout((=>
+      @heroicOn(el, cls, t1, t2)
+    ), t2)
 
   render: ->
     @$el.append(@template())
+
+  pickInstrument: (e) ->
+    $(window).trigger 'instrument', {instrument: e.currentTarget.value}
+    console.log 'happy pickinst coord callback'
+
+  pickOctave: (e) ->
+    $(window).trigger 'octave', {octave: e.currentTarget.value}
+    console.log 'happy octave coord callback'
 
 
   # SOUND GENERATOR

@@ -16,6 +16,47 @@
 
     AudioBoss.prototype.source = false;
 
+    AudioBoss.prototype.instruments = {
+      'brom': {
+        ramps: {
+          "in": 0.001,
+          out: 0.01
+        },
+        osc1Type: 0,
+        osc2Type: 2,
+        mod: 0.2
+      },
+      'blar': {
+        ramps: {
+          "in": 0.1,
+          out: 0.01
+        },
+        osc1Type: 1,
+        osc2Type: 1,
+        mod: 0
+      },
+      'piip': {
+        ramps: {
+          "in": 0.8,
+          out: 1
+        },
+        osc1Type: 3,
+        osc2Type: 2,
+        mod: 5
+      },
+      'bumm': {
+        ramps: {
+          "in": 0.1,
+          out: 0.1
+        },
+        osc1Type: 0,
+        osc2Type: 0,
+        mod: 0
+      }
+    };
+
+    AudioBoss.prototype.currentInstrument = 'brom';
+
     AudioBoss.prototype.initialize = function() {
       this.context = new webkitAudioContext();
       this.initOutput();
@@ -23,7 +64,8 @@
       this.initGenerators();
       this.initEffects();
       this.initExtendedScale('aMinor');
-      return this.initEvents();
+      this.initEvents();
+      return this.setInstrument('brom');
     };
 
     AudioBoss.prototype.initOutput = function() {
@@ -72,25 +114,29 @@
         var freq;
         freq = _this.floatToFreq(data['x']);
         _this.setOscFrequencies(freq);
-        return _this.ramp(0.5 - data['y'] / 2, 0.2);
+        return _this.ramp(0.5 - data['y'] / 2, 'in');
       });
       $(window).on('audio_gen_note_off', function(e) {
-        return _this.ramp(0, 0.5);
+        return _this.ramp(0, 'out');
       });
       $(window).on('octave', function(e, data) {
         return _this.initExtendedScale('aMinor', data['octave']);
+      });
+      $(window).on('instrument', function(e, data) {
+        return _this.setInstrument(data['instrument']);
       });
       return $(window).on('audio_mod', function(e, data) {
         return _this.setEffect(data['mod_type'], data['x'], data['y']);
       });
     };
 
-    AudioBoss.prototype.ramp = function(value, length) {
+    AudioBoss.prototype.ramp = function(value, type) {
       var now;
       now = this.context.currentTime;
       this.oscGain.gain.cancelScheduledValues(now);
       this.oscGain.gain.setValueAtTime(this.oscGain.gain.value, now);
-      return this.oscGain.gain.linearRampToValueAtTime(value, now + length);
+      console.log(this.instruments[this.currentInstrument]['ramps'][type]);
+      return this.oscGain.gain.linearRampToValueAtTime(value, now + this.instruments[this.currentInstrument]['ramps'][type]);
     };
 
     AudioBoss.prototype.setOscFrequencies = function(freq) {
@@ -107,8 +153,8 @@
       if (octave == null) {
         octave = 3;
       }
+      octave = parseInt(octave);
       l = this.rootScales[scale].length;
-      this.scale = [];
       _ref = this.rootScales[scale];
       _results = [];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
@@ -196,6 +242,13 @@
         this.effects[effectName].rate = v1 * 8;
         return this.effects[effectName].intensity = v2;
       }
+    };
+
+    AudioBoss.prototype.setInstrument = function(name) {
+      this.currentInstrument = name;
+      this.osc1.type = this.instruments[name]['osc1Type'];
+      this.osc2.type = this.instruments[name]['osc2Type'];
+      return this.oscOscGain.gain.value = this.instruments[name]['mod'];
     };
 
     return AudioBoss;

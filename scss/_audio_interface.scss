@@ -115,3 +115,15 @@
     z-index: 0;
   }
 }
+
+
+
+.red{
+  &:after{
+    background-color: tomato;
+  }
+}
+
+.green {
+  background-color: green !important;
+}
