@@ -3,27 +3,27 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Jabuticaba.Views.Home = (function(_super) {
+  Jabuticaba.Views.Marcel = (function(_super) {
 
-    __extends(Home, _super);
+    __extends(Marcel, _super);
 
-    function Home() {
-      return Home.__super__.constructor.apply(this, arguments);
+    function Marcel() {
+      return Marcel.__super__.constructor.apply(this, arguments);
     }
 
-    Home.prototype.template = JST['home'];
+    Marcel.prototype.template = JST['marcel'];
 
-    Home.prototype.el = "body";
+    Marcel.prototype.el = "body";
 
-    Home.prototype.initialize = function() {
-      return console.debug('initialize');
+    Marcel.prototype.initialize = function() {
+      return console.debug('initialize marcel');
     };
 
-    Home.prototype.render = function() {
+    Marcel.prototype.render = function() {
       return this.$el.find('#container').append(this.template());
     };
 
-    return Home;
+    return Marcel;
 
   })(Backbone.View);
 

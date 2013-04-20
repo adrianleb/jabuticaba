@@ -4,9 +4,12 @@ class Jabuticaba.Routers.Main extends Backbone.Router
 
   routes:
     '': 'home'
+    'marcel': 'marcel'
     '*other': 'home'
 
   home: ->
     unless @view instanceof Jabuticaba.Views.Home
       @view = new Jabuticaba.Views.Home()
 
+  marcel: ->
+    @view = new Jabuticaba.Views.Marcel()

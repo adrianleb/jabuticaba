@@ -15,6 +15,7 @@
 
     Main.prototype.routes = {
       '': 'home',
+      'marcel': 'marcel',
       '*other': 'home'
     };
 
@@ -22,6 +23,10 @@
       if (!(this.view instanceof Jabuticaba.Views.Home)) {
         return this.view = new Jabuticaba.Views.Home();
       }
+    };
+
+    Main.prototype.marcel = function() {
+      return this.view = new Jabuticaba.Views.Marcel();
     };
 
     return Main;
