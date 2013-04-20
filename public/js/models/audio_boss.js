@@ -8,9 +8,11 @@
 
     AudioBoss.prototype.effects = {};
 
-    AudioBoss.prototype.scales = {
-      'aMinor': [33, 35, 36, 38, 40, 41, 43]
+    AudioBoss.prototype.rootScales = {
+      'aMinor': [21, 23, 24, 26, 28, 29, 31]
     };
+
+    AudioBoss.prototype.scale = [];
 
     AudioBoss.prototype.source = false;
 
@@ -51,9 +53,17 @@
       this.osc1.connect(this.oscGain);
       this.osc1.noteOn(0);
       this.osc2 = this.context.createOscillator();
-      this.osc2.type = 3;
+      this.osc2.type = 2;
       this.osc2.connect(this.oscGain);
-      return this.osc2.noteOn(0);
+      this.osc2.noteOn(0);
+      this.oscOsc = this.context.createOscillator();
+      this.oscOsc.type = 0;
+      this.oscOsc.frequency.value = 0.25;
+      this.oscOsc.noteOn(0);
+      this.oscOscGain = this.context.createGainNode();
+      this.oscOscGain.gain.value = 0.5;
+      this.oscOsc.connect(this.oscOscGain);
+      return this.oscOscGain.connect(this.osc1.frequency);
     };
 
     AudioBoss.prototype.initEvents = function() {
@@ -64,8 +74,11 @@
         _this.setOscFrequencies(freq);
         return _this.ramp(0.5 - data['y'] / 2, 0.2);
       });
-      return $(window).on('audio_gen_note_off', function(e) {
+      $(window).on('audio_gen_note_off', function(e) {
         return _this.ramp(0, 0.5);
+      });
+      return $(window).on('octave', function(e, data) {
+        return _this.initExtendedScale('aMinor', data['octave']);
       });
     };
 
@@ -82,25 +95,26 @@
       return this.osc2.frequency.value = freq;
     };
 
-    AudioBoss.prototype.floatToFreq = function(f, scale) {
-      if (scale == null) {
-        scale = 'aMinor';
-      }
-      return this.scales[scale][Math.round(f * (this.scales[scale].length - 1))];
+    AudioBoss.prototype.floatToFreq = function(f) {
+      return this.scale[Math.round(f * (this.scale.length - 1))];
     };
 
-    AudioBoss.prototype.initExtendedScale = function(scale) {
+    AudioBoss.prototype.initExtendedScale = function(scale, octave) {
       var i, j, l, v, _i, _len, _ref, _results;
-      l = this.scales[scale].length;
-      _ref = this.scales[scale];
+      if (octave == null) {
+        octave = 3;
+      }
+      l = this.rootScales[scale].length;
+      this.scale = [];
+      _ref = this.rootScales[scale];
       _results = [];
       for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         v = _ref[i];
         _results.push((function() {
           var _j, _results1;
           _results1 = [];
-          for (j = _j = 0; _j <= 5; j = ++_j) {
-            _results1.push(this.scales[scale][i + (j * l)] = Math.pow(2, ((v + (12 * j)) - 69) / 12) * 440);
+          for (j = _j = 0; _j <= 2; j = ++_j) {
+            _results1.push(this.scale[i + (j * l)] = Math.pow(2, ((v + (12 * (j + octave))) - 69) / 12) * 440);
           }
           return _results1;
         }).call(this));

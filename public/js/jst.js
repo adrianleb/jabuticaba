@@ -38,7 +38,7 @@ JST['audio_interface/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
-      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n<div class="audio_output"></div>');
+      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n\n<div class="audio_output"></div>');
     
     }).call(this);
     
@@ -85,6 +85,7 @@ JST['home'] = function(__obj) {
   }
   (function() {
     (function() {
+    
       __out.push('  <section id="roll" class="roll"></section>\n');
     
     }).call(this);
