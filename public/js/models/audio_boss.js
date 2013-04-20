@@ -17,6 +17,7 @@
     AudioBoss.prototype.initialize = function() {
       this.context = new webkitAudioContext();
       this.initOutput();
+      this.initInput();
       this.initGenerators();
       this.initEffects();
       this.initExtendedScale('aMinor');
@@ -26,10 +27,16 @@
     AudioBoss.prototype.initOutput = function() {
       this.outGainNode = this.context.createGainNode();
       this.outGainNode.gain.value = 0.7;
-      this.outGainNode.connect(this.context.destination);
+      return this.outGainNode.connect(this.context.destination);
+    };
+
+    AudioBoss.prototype.initInput = function() {
+      this.sourcePanner = this.context.createPanner();
+      this.sourcePanner.setPosition(0.7, 0, 0);
+      this.sourcePanner.connect(this.outGainNode);
       this.sourceGainNode = this.context.createGainNode();
       this.sourceGainNode.gain.value = 0.5;
-      return this.sourceGainNode.connect(this.outGainNode);
+      return this.sourceGainNode.connect(this.sourcePanner);
     };
 
     AudioBoss.prototype.initGenerators = function() {
@@ -103,7 +110,6 @@
 
     AudioBoss.prototype.initEffects = function() {
       var _this = this;
-      this.source = this.oscGain;
       if (!this.source) {
         return "Oh no!";
       }
@@ -152,6 +158,7 @@
     };
 
     AudioBoss.prototype.setEffect = function(effectName, v1, v2) {
+      this.silenceEffects();
       if (effectName === 'overdrive') {
         this.effects[effectName].bypass = false;
         this.effects[effectName].drive = v1;

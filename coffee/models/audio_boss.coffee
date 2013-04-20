@@ -10,22 +10,29 @@ class AudioBoss
   initialize: ->
     @context = new webkitAudioContext()
     
-    @initOutput()
-    @initGenerators()
-    @initEffects()
+    @initOutput() # Connect the output
+    @initInput() # Connect the source
+
+    @initGenerators() # Init and connect the generators
+    @initEffects() # Init and connect the effects
 
     @initExtendedScale('aMinor')
     
-    @initEvents()
+    @initEvents() # Listen!
 
   initOutput: ->
     @outGainNode = @context.createGainNode()
     @outGainNode.gain.value = 0.7
     @outGainNode.connect(@context.destination)
 
+  initInput: ->
+    @sourcePanner = @context.createPanner()
+    @sourcePanner.setPosition(0.7, 0, 0)
+    @sourcePanner.connect(@outGainNode)
+
     @sourceGainNode = @context.createGainNode()
     @sourceGainNode.gain.value = 0.5
-    @sourceGainNode.connect(@outGainNode)
+    @sourceGainNode.connect(@sourcePanner)
 
   initGenerators: ->
 
@@ -35,7 +42,7 @@ class AudioBoss
     @oscGain = @context.createGainNode()
     @oscGain.gain.value = 0
     @oscGain.connect(@oscPanner)
-    
+
     @oscPanner.connect(@outGainNode)
 
     @osc1 = @context.createOscillator()
@@ -83,7 +90,7 @@ class AudioBoss
         @scales[scale][i+(j*l)] = Math.pow(2, ((v + (12*j))-69)/12) * 440
 
   initEffects: ->
-    @source = @oscGain
+
     if not @source
       return "Oh no!"
 
@@ -130,6 +137,8 @@ class AudioBoss
 
   setEffect: (effectName, v1, v2) ->
     
+    @silenceEffects()
+
     if effectName is 'overdrive'
       @effects[effectName].bypass = false
       @effects[effectName].drive = v1
