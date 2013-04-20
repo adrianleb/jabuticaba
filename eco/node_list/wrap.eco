@@ -1,0 +1,10 @@
+<p>IM A LIST OF USER NODES OK?</p>
+<div class="nodes">
+  <% console.log @activeNodes %>
+  <% for node in @activeNodes: %>
+    <% console.log node%>
+    <div class="node" data-id="<%= node.id %>">
+      <p><%= node.alias %></p>
+    </div>
+  <% end %>
+</div>

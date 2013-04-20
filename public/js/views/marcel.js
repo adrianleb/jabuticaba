@@ -15,12 +15,43 @@
 
     Marcel.prototype.el = "body";
 
+    Marcel.prototype.events = {
+      '#send click': 'send',
+      '#open-room': 'openRoom',
+      '#join-room': 'joinRoom'
+    };
+
     Marcel.prototype.initialize = function() {
-      return console.debug('initialize marcel');
+      var _this = this;
+      console.debug('init marcelzz');
+      this.room = new DataChannel('room');
+      this.room.onopen = function(user_id) {
+        return console.log('onopen: ' + user_id);
+      };
+      this.room.onUserLeft = function(user_id) {
+        return console.log('onUserLeft: ' + user_id);
+      };
+      this.room.onmessage = function(msg) {
+        return _this.$('#messages').append(msg + "<br/>");
+      };
+      return this.render();
     };
 
     Marcel.prototype.render = function() {
+      console.debug('rendorz');
       return this.$el.find('#container').append(this.template());
+    };
+
+    Marcel.prototype.send = function() {
+      return this.room.send(this.$('#msg').val());
+    };
+
+    Marcel.prototype.openRoom = function() {
+      return this.room.open('room');
+    };
+
+    Marcel.prototype.joinRoom = function() {
+      return this.room.connect('room');
     };
 
     return Marcel;

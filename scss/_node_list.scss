@@ -1,0 +1,22 @@
+.nodes_wrap {
+  height: 22rem;
+  background-color: #f7f7f7;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 7rem;
+  border-bottom: 1px solid #e6e7e6;
+}
+
+.node {
+  @include border-radius(100%);
+  background-color: red;
+  height: 0;
+  width: 5%;
+  padding-bottom: 5%;
+  display: inline-block;
+  margin-right: 2.5%;
+  background-image: url('http://placecage.com/500/500');
+  background-size: cover;
+}
