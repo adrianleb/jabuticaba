@@ -16,7 +16,9 @@
     Home.prototype.el = "body";
 
     Home.prototype.initialize = function() {
-      return console.debug('initialize');
+      console.debug('initialize');
+      this.nodeList = new Jabuticaba.Views.NodeList();
+      return this.audioInterface = new Jabuticaba.Views.AudioInterface();
     };
 
     Home.prototype.render = function() {
