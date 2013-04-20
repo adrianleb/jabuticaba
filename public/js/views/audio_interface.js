@@ -19,16 +19,51 @@
       "mousedown #audio-generator": "noteOn",
       "mouseup #audio-generator": "noteOff",
       "mousemove #audio-modulator": "modulatorDragger",
-      "mousedown #audio-modulator": "modulatorDragger"
+      "mousedown #audio-modulator": "modulatorDragger",
+      "change #instrument-picker": "pickInstrument",
+      "change #octave-picker": "pickOctave"
     };
 
     AudioInterface.prototype.initialize = function() {
       console.debug('init audio interface');
-      return this.render();
+      this.render();
+      this.heroicOn('#audio-generator', 'red', 50, 300);
+      this.heroicOn('.audio_source', 'green', 40, 310);
+      return this.heroicOn('.audio_output', 'green', 51, 289);
+    };
+
+    AudioInterface.prototype.heroicOn = function(el, cls, t1, t2) {
+      var _this = this;
+      $(el).addClass(cls);
+      return setTimeout((function() {
+        return _this.heroicOff(el, cls, t1, t2);
+      }), t1);
+    };
+
+    AudioInterface.prototype.heroicOff = function(el, cls, t1, t2) {
+      var _this = this;
+      $(el).removeClass(cls);
+      return setTimeout((function() {
+        return _this.heroicOn(el, cls, t1, t2);
+      }), t2);
     };
 
     AudioInterface.prototype.render = function() {
       return this.$el.append(this.template());
+    };
+
+    AudioInterface.prototype.pickInstrument = function(e) {
+      $(window).trigger('instrument', {
+        instrument: e.currentTarget.value
+      });
+      return console.log('happy pickinst coord callback');
+    };
+
+    AudioInterface.prototype.pickOctave = function(e) {
+      $(window).trigger('octave', {
+        octave: e.currentTarget.value
+      });
+      return console.log('happy octave coord callback');
     };
 
     AudioInterface.prototype.noteOn = function(e) {

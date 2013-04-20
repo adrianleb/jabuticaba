@@ -6,4 +6,24 @@
   <span class="audio_module_point"></span>
 </div>
 
+<label for="instrument-picker">Sound</label>
+<select id="instrument-picker">
+  <option>brom</option>
+  <option>blar</option>
+  <option>bumm</option>
+  <option>piip</option>
+</select>
+
+<label for="octave-picker">Octavez</label>
+<select id="octave-picker">
+  <option>0</option>
+  <option>1</option>
+  <option>2</option>
+  <option selected>3</option>
+  <option>4</option>
+  <option>5</option>
+  <option>6</option>
+  <option>7</option>
+</select>
+
 <div class="audio_output"></div>
