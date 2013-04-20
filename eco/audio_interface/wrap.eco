@@ -1,5 +1,3 @@
-<p>IM AN AUDIO INTERFACE, LOOK AT ME IM SO SEXYyyy</p>
-
 <div class="audio_source"></div>
 <div id="audio-modulator" class="audio_module audio_modulator">
   <span class="audio_module_point"></span>
