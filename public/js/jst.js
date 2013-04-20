@@ -38,6 +38,7 @@ JST['audio_interface/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
+    
       __out.push('<p>IM AN AUDIO INTERFACE, LOOK AT ME IM SO SEXYyyy</p>\n\n<div class="audio_source"></div>\n<div class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>');
     
     }).call(this);
@@ -85,6 +86,7 @@ JST['home'] = function(__obj) {
   }
   (function() {
     (function() {
+    
       __out.push('  <section id="roll" class="roll"></section>\n');
     
     }).call(this);
@@ -132,6 +134,7 @@ JST['marcel'] = function(__obj) {
   }
   (function() {
     (function() {
+    
       __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a>\n<a id="join-room" href="#">Join Room</a>\n\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\n<div id="messages">\n</div>\n\n');
     
     }).call(this);

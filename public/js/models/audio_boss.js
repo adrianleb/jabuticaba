@@ -25,14 +25,22 @@
       this.osc2.connect(this.context.destination);
       this.osc2.noteOn(0);
       this.tuna = new Tuna(this.context);
-      return this.initExtendedScale('aMinor');
+      this.initExtendedScale('aMinor');
+      return this.initEvents();
+    };
+
+    AudioBoss.prototype.initEvents = function() {
+      var _this = this;
+      return $(window).on('audio_gen_note_on', function(e, data) {
+        return console.log(_this.floatToFreq(data['x']));
+      });
     };
 
     AudioBoss.prototype.floatToFreq = function(f, scale) {
       if (scale == null) {
         scale = 'aMinor';
       }
-      return this.scales[scale][Math.round(f * this.scales[scale])];
+      return this.scales[scale][Math.round(f * this.scales[scale].length)];
     };
 
     AudioBoss.prototype.initExtendedScale = function(scale) {

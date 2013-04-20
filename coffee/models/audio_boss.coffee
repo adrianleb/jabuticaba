@@ -23,10 +23,24 @@ class AudioBoss
     @tuna = new Tuna(@context)
 
     @initExtendedScale('aMinor')
-  
+    
+    @initEvents()
+
+  initEvents: ->
+    $(window).on('audio_gen_note_on', (e, data) =>
+      freq = @floatToFreq(data['x'])
+      console.log(freq)
+      @osc1.frequency.value = freq
+      #@osc2.frequency.value = frequency)
+
+    $(window).on('audio_gen_note_off', (e, data) =>
+      console.log('not off')
+      @osc1.frequency.value = 0
+      @osc2.frequency.value = 0)
+
   # Transform a float into a frequency from scale
   floatToFreq: (f, scale='aMinor') ->
-    return @scales[scale][Math.round((f*@scales[scale]))]
+    return Math.min(0, Math.max(@scales[scale][Math.round((f*(@scales[scale].length-1)))], @scales[scale].length-1) 
 
   # This function takes a low-pitch, array 
   # of numbered notes and transforms them into 
