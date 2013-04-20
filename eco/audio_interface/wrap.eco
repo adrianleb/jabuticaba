@@ -4,6 +4,6 @@
 <div class="audio_module audio_modulator">
   <span class="audio_module_point"></span>
 </div>
-<div class="audio_module audio_generator">
+<div id="audio-generator" class="audio_module audio_generator">
   <span class="audio_module_point"></span>
 </div>
