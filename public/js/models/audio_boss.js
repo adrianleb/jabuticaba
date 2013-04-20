@@ -15,7 +15,6 @@
     AudioBoss.prototype.initialize = function() {
       this.context = new webkitAudioContext();
       this.initGenerators();
-      this.initEffects();
       this.initExtendedScale('aMinor');
       return this.initEvents();
     };
@@ -40,7 +39,7 @@
         var freq;
         freq = _this.floatToFreq(data['x']);
         _this.setOscFrequencies(freq);
-        return _this.ramp(Math.min(0.5, 1 - data['y']), 0.2);
+        return _this.ramp(0.5 - data['y'] / 2, 0.2);
       });
       return $(window).on('audio_gen_note_off', function(e) {
         return _this.ramp(0, 0.5);
@@ -103,9 +102,18 @@
         dryLevel: 0.5,
         bypass: true
       });
-      console.log("@effects set");
-      console.log(this.effects);
-      console.log(this.effects.length);
+      this.effects['chorus'] = new this.tuna.Chorus({
+        feedback: 0.5,
+        rate: 1.5,
+        delay: 0.005,
+        bypass: true
+      });
+      this.effects['tremolo'] = new this.tuna.Tremolo({
+        intensity: 0.3,
+        rate: 0.1,
+        stereoPhase: 0,
+        bypass: false
+      });
       return _.each(this.effects, function(effect) {
         _this.source.connect(effect.input);
         return effect.connect(_this.context.destination);
@@ -125,7 +133,6 @@
 
     AudioBoss.prototype.setEffect = function(effectName, v1, v2) {
       if (effectName === 'overdrive') {
-        console.log('Set od');
         this.effects[effectName].bypass = false;
         this.effects[effectName].drive = v1;
         this.effects[effectName].curveAmount = v2;
@@ -133,7 +140,17 @@
       if (effectName === 'overdrive') {
         this.effects[effectName].bypass = false;
         this.effects[effectName].feedback = v1;
-        return this.effects[effectName].delayTime = v2;
+        this.effects[effectName].delayTime = v2;
+      }
+      if (effectName === 'chorus') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].rate = v1 * 20;
+        this.effects[effectName].feedback = v2;
+      }
+      if (effectName === 'tremolo') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].rate = v1 * 8;
+        return this.effects[effectName].intensity = v2;
       }
     };
 

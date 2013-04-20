@@ -9,7 +9,7 @@ class AudioBoss
     @context = new webkitAudioContext()
     
     @initGenerators()
-    @initEffects()
+    #@initEffects()
 
     @initExtendedScale('aMinor')
     
@@ -35,7 +35,7 @@ class AudioBoss
     $(window).on 'audio_gen_note_on', (e, data) =>
       freq = @floatToFreq(data['x'])
       @setOscFrequencies(freq)
-      @ramp(Math.min(0.5, 1-data['y']), 0.2)
+      @ramp(0.5-data['y']/2, 0.2)
     
     $(window).on 'audio_gen_note_off', (e) =>
       @ramp(0, 0.5)
@@ -84,9 +84,20 @@ class AudioBoss
       dryLevel: 0.5
       bypass: true
     )
-    console.log("@effects set")
-    console.log(@effects)
-    console.log(@effects.length)
+
+    @effects['chorus'] = new @tuna.Chorus(
+      feedback: 0.5
+      rate: 1.5
+      delay: 0.005
+      bypass: true
+    )
+
+    @effects['tremolo'] = new @tuna.Tremolo(
+        intensity: 0.3    # 0 to 1
+        rate: 0.1         # 0.001 to 8
+        stereoPhase: 0    # 0 to 180
+        bypass: false
+    )
 
     _.each @effects, (effect) =>
       @source.connect(effect.input)
@@ -100,7 +111,6 @@ class AudioBoss
   setEffect: (effectName, v1, v2) ->
     
     if effectName is 'overdrive'
-      console.log('Set od')
       @effects[effectName].bypass = false
       @effects[effectName].drive = v1
       @effects[effectName].curveAmount = v2
@@ -109,5 +119,15 @@ class AudioBoss
       @effects[effectName].bypass = false
       @effects[effectName].feedback = v1
       @effects[effectName].delayTime = v2
+
+    if effectName is 'chorus'
+      @effects[effectName].bypass = false
+      @effects[effectName].rate = v1*20
+      @effects[effectName].feedback = v2
+
+    if effectName is 'tremolo'
+      @effects[effectName].bypass = false
+      @effects[effectName].rate = v1*8
+      @effects[effectName].intensity = v2
 
 window.AudioBoss = new AudioBoss()
