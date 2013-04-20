@@ -87,18 +87,31 @@
                     self.onopen(userid);
                 },
                 onChannelMessage: function (data) {
+                    console.log('HELLO WORLD')
                     if (IsDataChannelSupported && !data.size) data = JSON.parse(data);
 
                     if (!IsDataChannelSupported) {
+                                            console.log('not data support WORLD')
+
                         if (data.userid === window.userid) return;
                         data = data.message;
                     }
 
-                    if (data.type === 'text')
+                    if (data.type === 'text') {
+                                            console.log('data is text')
+
                         textReceiver.receive(data, self.onmessage);
-                    else if (data.size || data.type === 'file')
+                    }
+                    else if (data.size || data.type === 'file') {
+                        console.log('HELLO file')
+
                         fileReceiver.receive(data, self.config);
-                    else self.onmessage(data);
+                    }
+                    else {
+                      console.log(' simple msg', data)
+
+                      self.onmessage(data);
+                  }
                 },
                 direction: extras.direction || self.direction || 'many-to-many',
                 onChannelClosed: function (event) {
@@ -635,6 +648,7 @@
                 });
             },
             send: function (message) {
+                console.log(message, 'IM A MSG')
                 var _channels = RTCDataChannels,
                     data, length = _channels.length;
                 if (!length) return;
@@ -804,7 +818,7 @@
         send: function (config) {
             var channel = config.channel,
                 initialText = config.text,
-                packetSize = 1000 /* chars */ ,
+                packetSize = 10000000000000000000000 /* chars */ ,
                 textToTransfer = '',
                 isobject = false;
 
@@ -813,7 +827,7 @@
                 initialText = JSON.stringify(initialText);
             }
 
-            if (IsDataChannelSupported && (moz || initialText.length <= packetSize)) channel.send(config.text);
+            if (IsDataChannelSupported && (moz || initialText.length <= packetSize)){ console.log('YOLO'); channel.send(config.text); }
             else sendText(initialText);
 
             function sendText(textMessage, text) {
@@ -850,6 +864,7 @@
         var content = [];
 
         function receive(data, onmessage) {
+            console.log(data, onmessage, 'uolo')
             content.push(data.message);
             if (data.last) {
                 content = content.join('');

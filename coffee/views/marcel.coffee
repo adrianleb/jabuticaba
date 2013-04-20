@@ -12,12 +12,12 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     'click #join-room': 'joinRoom'
     'click #generate-sound': 'generateSound'
 
-  roomName: 'room-14'
+  roomName: 'room-15'
 
   initialize: ->    
     @incommingContext = new webkitAudioContext()
     @outputContext = new webkitAudioContext()
-
+    window.marcel = @
     console.debug('init marcelzz')
     console.log 'hai'
     @room = new DataChannel()
@@ -29,6 +29,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       console.log('onUserLeft: ' + user_id)
 
     @room.onmessage = (msg) =>
+      console.log 'msg', msg
       # @$('#messages').append(msg + "<br/>")
       @$('#messages').append(msg)
 
@@ -50,9 +51,9 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     @incommingContext.decodeAudioData d, ((buffer) =>
       console.log 'income', buffer
       inBuffer = buffer
-      mySource = @outputContext.createBufferSource()
+      mySource =     @incommingContext.createBufferSource()
       mySource.buffer = inBuffer
-      mySource.connect(@outputContext.destination)
+      mySource.connect(    @incommingContext.destination)
       mySource.noteOn(0)
 
     ), (err) =>
@@ -61,8 +62,10 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
   send: (e) ->
     nop e
-    # cl('sending: ' + $('#msg').val())
+    console.log sound
+    cl('sending: ' + $('#msg').val())
     @room.send($('#msg').val())
+    # @room.send sound
   
   openRoom: (e) ->
     nop e
@@ -76,34 +79,48 @@ class Jabuticaba.Views.Marcel extends Backbone.View
   generateSound: (e) ->
     nop e
     cl('nonono: 99999')
+    # create osc...
     @o = @outputContext.createOscillator()
-    @js = @outputContext.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
-    @o.frequency.value = 440
-    @o.connect(@js)
-
-    @js.onaudioprocess = (e) =>
-      cl('onaudioprocess')
-      # https://gist.github.com/jonleighton/958841
-      # getChannelData(0) is a Float32Array
-      msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer)
-
-      cl('sending: ' + msg)
-
-      # send through the tubes
-      @room.send(msg)
-
-      # just copy the data to the js node output
-      e.outputBuffer.getChannelData(0).set(e.inputBuffer.getChannelData(0))
-
-
-
+    console.log 'pa'
+    # create gain
+    @g = @outputContext.createGainNode()
+    @g.gain = 0 # !!!!
+    console.log 'ra'
+    # create context.createMediaStreamDestination()
+    @peer = @outputContext.createMediaStreamDestination()
+    console.log 'ti'
+    #plug 
+    @o.connect(@g)
+    @g.connect @peer
+    peerConnection.addStream(@peer.stream)
+    # @g.connect(@outputContext.destination)
+    console.log 'yolo', peerConnection
     @o.start(0)
+    # @js = @outputContext.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
+    # @o.frequency.value = 440
+
+
+    # @js.onaudioprocess = (e) =>
+    #   cl('onaudioprocess')
+    #   # https://gist.github.com/jonleighton/958841
+    #   # getChannelData(0) is a Float32Array
+    #   msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer)
+
+    #   cl('sending: ' + msg)
+
+    #   # send through the tubes
+    #   @room.send(msg)
+
+    #   # just copy the data to the js node output
+    #   e.outputBuffer.getChannelData(0).set(e.inputBuffer.getChannelData(0))
+
+
+
+
     
     # we need to send it somewhere or else nothing runs.
-    @g = @outputContext.createGainNode()
-    @js.connect(@g)
-    @g.gain = 0 # !!!!
-    @g.connect(@outputContext.destination)
+
+    # @js.connect(@g)
 
 
 

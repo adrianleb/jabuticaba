@@ -24,12 +24,13 @@
       'click #generate-sound': 'generateSound'
     };
 
-    Marcel.prototype.roomName = 'room-14';
+    Marcel.prototype.roomName = 'room-15';
 
     Marcel.prototype.initialize = function() {
       var _this = this;
       this.incommingContext = new webkitAudioContext();
       this.outputContext = new webkitAudioContext();
+      window.marcel = this;
       console.debug('init marcelzz');
       console.log('hai');
       this.room = new DataChannel();
@@ -41,6 +42,7 @@
       };
       this.room.onmessage = function(msg) {
         var d;
+        console.log('msg', msg);
         _this.$('#messages').append(msg);
         d = Base64Binary.decodeArrayBuffer(msg);
         console.log('hai', d);
@@ -61,9 +63,9 @@
         var inBuffer, mySource;
         console.log('income', buffer);
         inBuffer = buffer;
-        mySource = _this.outputContext.createBufferSource();
+        mySource = _this.incommingContext.createBufferSource();
         mySource.buffer = inBuffer;
-        mySource.connect(_this.outputContext.destination);
+        mySource.connect(_this.incommingContext.destination);
         return mySource.noteOn(0);
       }), function(err) {
         return console.log(err, 'ERRORRRRR');
@@ -72,6 +74,8 @@
 
     Marcel.prototype.send = function(e) {
       nop(e);
+      console.log(sound);
+      cl('sending: ' + $('#msg').val());
       return this.room.send($('#msg').val());
     };
 
@@ -86,26 +90,20 @@
     };
 
     Marcel.prototype.generateSound = function(e) {
-      var _this = this;
       nop(e);
       cl('nonono: 99999');
       this.o = this.outputContext.createOscillator();
-      this.js = this.outputContext.createScriptProcessor(256, 1, 1);
-      this.o.frequency.value = 440;
-      this.o.connect(this.js);
-      this.js.onaudioprocess = function(e) {
-        var msg;
-        cl('onaudioprocess');
-        msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer);
-        cl('sending: ' + msg);
-        _this.room.send(msg);
-        return e.outputBuffer.getChannelData(0).set(e.inputBuffer.getChannelData(0));
-      };
-      this.o.start(0);
+      console.log('pa');
       this.g = this.outputContext.createGainNode();
-      this.js.connect(this.g);
       this.g.gain = 0;
-      return this.g.connect(this.outputContext.destination);
+      console.log('ra');
+      this.peer = this.outputContext.createMediaStreamDestination();
+      console.log('ti');
+      this.o.connect(this.g);
+      this.g.connect(this.peer);
+      peerConnection.addStream(this.peer.stream);
+      console.log('yolo', peerConnection);
+      return this.o.start(0);
     };
 
     return Marcel;
