@@ -51,7 +51,7 @@ class AudioBoss
     @osc1.noteOn(0)
 
     @osc2 = @context.createOscillator()
-    @osc2.type = 3
+    @osc2.type = 1
     @osc2.connect(@oscGain)
     @osc2.noteOn(0)
 

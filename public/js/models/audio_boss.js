@@ -51,7 +51,7 @@
       this.osc1.connect(this.oscGain);
       this.osc1.noteOn(0);
       this.osc2 = this.context.createOscillator();
-      this.osc2.type = 3;
+      this.osc2.type = 1;
       this.osc2.connect(this.oscGain);
       return this.osc2.noteOn(0);
     };
