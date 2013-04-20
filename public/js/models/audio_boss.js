@@ -6,7 +6,7 @@
 
     function AudioBoss() {}
 
-    AudioBoss.prototype.effectSlots = [null, null];
+    AudioBoss.prototype.effects = {};
 
     AudioBoss.prototype.scales = {
       'aMinor': [33, 35, 36, 38, 40, 41, 43]
@@ -14,19 +14,24 @@
 
     AudioBoss.prototype.initialize = function() {
       this.context = new webkitAudioContext();
-      this.osc1 = this.context.createOscillator();
-      this.osc1.type = 0;
-      this.osc1.frequency.value = 0;
-      this.osc1.connect(this.context.destination);
-      this.osc1.noteOn(0);
-      this.osc2 = this.context.createOscillator();
-      this.osc2.type = 1;
-      this.osc2.frequency.value = 0;
-      this.osc2.connect(this.context.destination);
-      this.osc2.noteOn(0);
-      this.tuna = new Tuna(this.context);
+      this.initGenerators();
+      this.initEffects();
       this.initExtendedScale('aMinor');
       return this.initEvents();
+    };
+
+    AudioBoss.prototype.initGenerators = function() {
+      this.oscGain = this.context.createGainNode();
+      this.oscGain.gain.value = 0;
+      this.oscGain.connect(this.context.destination);
+      this.osc1 = this.context.createOscillator();
+      this.osc1.type = 0;
+      this.osc1.connect(this.oscGain);
+      this.osc1.noteOn(0);
+      this.osc2 = this.context.createOscillator();
+      this.osc2.type = 3;
+      this.osc2.connect(this.oscGain);
+      return this.osc2.noteOn(0);
     };
 
     AudioBoss.prototype.initEvents = function() {
@@ -34,13 +39,20 @@
       $(window).on('audio_gen_note_on', function(e, data) {
         var freq;
         freq = _this.floatToFreq(data['x']);
-        console.log(freq);
-        return _this.setOscFrequencies(freq);
+        _this.setOscFrequencies(freq);
+        return _this.ramp(Math.min(0.5, 1 - data['y']), 0.2);
       });
       return $(window).on('audio_gen_note_off', function(e) {
-        console.log('note off');
-        return _this.setOscFrequencies(0);
+        return _this.ramp(0, 0.5);
       });
+    };
+
+    AudioBoss.prototype.ramp = function(value, length) {
+      var now;
+      now = this.context.currentTime;
+      this.oscGain.gain.cancelScheduledValues(now);
+      this.oscGain.gain.setValueAtTime(this.oscGain.gain.value, now);
+      return this.oscGain.gain.linearRampToValueAtTime(value, now + length);
     };
 
     AudioBoss.prototype.setOscFrequencies = function(freq) {
@@ -74,25 +86,54 @@
       return _results;
     };
 
-    AudioBoss.prototype.setEffect = function(slot, effectName, amount) {
-      if (!effectName) {
+    AudioBoss.prototype.initEffects = function() {
+      var _this = this;
+      this.tuna = new Tuna(this.context);
+      this.effects['overdrive'] = new this.tuna.Overdrive({
+        outputGain: 0.3,
+        drive: 0.5,
+        curveAmount: 0.4,
+        algorithmIndex: 2,
+        bypass: true
+      });
+      this.effects['delay'] = new this.tuna.Delay({
+        feedback: 0,
+        delayTime: 250,
+        wetLevel: 0.5,
+        dryLevel: 0.5,
+        bypass: true
+      });
+      console.log("@effects set");
+      console.log(this.effects);
+      console.log(this.effects.length);
+      return _.each(this.effects, function(effect) {
+        _this.source.connect(effect.input);
+        return effect.connect(_this.context.destination);
+      });
+    };
 
-      } else {
-        if (effectName === 'overdrive') {
-          return effectSlots[slot] = new this.tuna.Overdrive({
-            outputGain: 0.6,
-            drive: amount,
-            curveAmount: 0.4,
-            algorithmIndex: 2
-          });
-        } else if (effectName === 'delay') {
-          return effectSlots[slot] = new this.tuna.Delay({
-            feedback: amount,
-            delayTime: 250,
-            wetLevel: 0.5,
-            dryLevel: 0.5
-          });
-        }
+    AudioBoss.prototype.silenceEffects = function() {
+      var effect, _i, _len, _ref, _results;
+      _ref = this.effects;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        effect = _ref[_i];
+        _results.push(effect.bypass = true);
+      }
+      return _results;
+    };
+
+    AudioBoss.prototype.setEffect = function(effectName, v1, v2) {
+      if (effectName === 'overdrive') {
+        console.log('Set od');
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].drive = v1;
+        this.effects[effectName].curveAmount = v2;
+      }
+      if (effectName === 'overdrive') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].feedback = v1;
+        return this.effects[effectName].delayTime = v2;
       }
     };
 

@@ -1,6 +1,6 @@
 class AudioBoss
 
-  effectSlots: [null,null]
+  effects: {}
 
   scales: 
     'aMinor': [33, 35, 36, 38, 40, 41, 43]
@@ -8,33 +8,43 @@ class AudioBoss
   initialize: ->
     @context = new webkitAudioContext()
     
-    @osc1 = @context.createOscillator()
-    @osc1.type = 0
-    @osc1.frequency.value = 0
-    @osc1.connect(@context.destination)
-    @osc1.noteOn(0)
-
-    @osc2 = @context.createOscillator()
-    @osc2.type = 1
-    @osc2.frequency.value = 0
-    @osc2.connect(@context.destination)
-    @osc2.noteOn(0)
-
-    @tuna = new Tuna(@context)
+    @initGenerators()
+    @initEffects()
 
     @initExtendedScale('aMinor')
     
     @initEvents()
 
+  initGenerators: ->
+
+    @oscGain = @context.createGainNode()
+    @oscGain.gain.value = 0
+    @oscGain.connect(@context.destination)
+
+    @osc1 = @context.createOscillator()
+    @osc1.type = 0
+    @osc1.connect(@oscGain)
+    @osc1.noteOn(0)
+
+    @osc2 = @context.createOscillator()
+    @osc2.type = 3
+    @osc2.connect(@oscGain)
+    @osc2.noteOn(0)
+
   initEvents: ->
     $(window).on 'audio_gen_note_on', (e, data) =>
       freq = @floatToFreq(data['x'])
-      console.log(freq)
       @setOscFrequencies(freq)
+      @ramp(Math.min(0.5, 1-data['y']), 0.2)
     
     $(window).on 'audio_gen_note_off', (e) =>
-      console.log('note off')
-      @setOscFrequencies(0)
+      @ramp(0, 0.5)
+
+  ramp: (value, length) ->
+    now = @context.currentTime
+    @oscGain.gain.cancelScheduledValues(now)
+    @oscGain.gain.setValueAtTime(@oscGain.gain.value, now)
+    @oscGain.gain.linearRampToValueAtTime(value, now + length)
 
   setOscFrequencies: (freq) ->
     @osc1.frequency.value = freq
@@ -55,35 +65,49 @@ class AudioBoss
       for j in [0..5]
         @scales[scale][i+(j*l)] = Math.pow(2, ((v + (12*j))-69)/12) * 440
 
-  setEffect: (slot, effectName, amount) ->
+  initEffects: ->
 
-    if not effectName
-      # Disconnect existing effect at slot n
-    else
+    @tuna = new Tuna(@context)
 
-      # Disconnect old effect
-      # if effectSlots[slot]
-      #   @source.connect(effectSlots[slot])
-      #   effectSlots[slot](@context)
+    @effects['overdrive'] = new @tuna.Overdrive(
+      outputGain: 0.3
+      drive: 0.5
+      curveAmount: 0.4
+      algorithmIndex: 2
+      bypass: true
+    )
 
-      if effectName is 'overdrive'
-        effectSlots[slot] = new @tuna.Overdrive(
-          outputGain: 0.6
-          drive: amount
-          curveAmount: 0.4
-          algorithmIndex: 2
-        )
+    @effects['delay'] = new @tuna.Delay(
+      feedback: 0
+      delayTime: 250
+      wetLevel: 0.5
+      dryLevel: 0.5
+      bypass: true
+    )
+    console.log("@effects set")
+    console.log(@effects)
+    console.log(@effects.length)
 
-      else if effectName is 'delay'
-        effectSlots[slot] = new @tuna.Delay(
-          feedback: amount,
-          delayTime: 250,
-          wetLevel: 0.5,
-          dryLevel: 0.5
-        )
+    _.each @effects, (effect) =>
+      @source.connect(effect.input)
+      effect.connect(@context.destination)
 
-      # Connect them
-      # @source.connect(effect)
-      # effect(@context)
+  silenceEffects: ->
+
+    for effect in @effects
+      effect.bypass = true
+
+  setEffect: (effectName, v1, v2) ->
+    
+    if effectName is 'overdrive'
+      console.log('Set od')
+      @effects[effectName].bypass = false
+      @effects[effectName].drive = v1
+      @effects[effectName].curveAmount = v2
+
+    if effectName is 'overdrive'
+      @effects[effectName].bypass = false
+      @effects[effectName].feedback = v1
+      @effects[effectName].delayTime = v2
 
 window.AudioBoss = new AudioBoss()
