@@ -77,8 +77,11 @@
       $(window).on('audio_gen_note_off', function(e) {
         return _this.ramp(0, 0.5);
       });
-      return $(window).on('octave', function(e, data) {
+      $(window).on('octave', function(e, data) {
         return _this.initExtendedScale('aMinor', data['octave']);
+      });
+      return $(window).on('audio_mod', function(e, data) {
+        return _this.setEffect(data['mod_type'], data['x'], data['y']);
       });
     };
 
