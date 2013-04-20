@@ -1,0 +1,33 @@
+.changelog_list {
+  margin-top: 3rem;
+  list-style: none;
+  h4 {
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    text-rendering:optimizeLegibility;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.6rem;
+  }
+  & > li {
+    list-style: none;
+    margin-bottom: 3rem;
+
+    & li {
+      margin-bottom: 0.5rem;
+    }
+  }
+  // background-color: red;
+}
+
+.changelog_title {
+  font-weight: bold;
+  font-size: 1.9rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid $SF_GRAY37;
+  time {
+    font-weight: 400;
+    font-size: 1.4rem;
+    font-style: italic;
+  }
+}

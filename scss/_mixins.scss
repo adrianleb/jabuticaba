@@ -1,0 +1,334 @@
+// PRESETS AND HELPER MIXINS
+// 
+// === 1. VARIABLES
+//
+// === 2. MIXINS
+//
+// === 3. HELPERS
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+// =======================================================================
+// MIXINS
+// =======================================================================
+
+
+// THE CORE
+// SHUFFLER MIXINS OF AWESOMENESS
+
+
+
+// MAKER OF ICONS
+
+@mixin shuffler_icon_maker($iconName, $width, $height, $positioning, $pseudo, $hoverIcon) {
+  @include icons-sprite($iconName);
+  @if $pseudo { content: ""; }
+  $iconHeight: icons-sprite-height($iconName);
+  $iconWidth: icons-sprite-width($iconName);
+  
+  @if $positioning == 'absolute' {
+    width: $iconWidth;
+    height: $iconHeight;
+    display: block;
+    position: absolute;    
+  } @else if $positioning == 'inline' { 
+    width: $iconWidth;
+    height: $iconHeight;
+    display: inline-block;
+    // float: left;   
+  }  
+  @if $hoverIcon {
+    &:hover, &.active, &.subscribed { @include icons-sprite($hoverIcon); }
+  }
+}
+
+
+@mixin shuffler_press_maker($iconName) {
+  @include press-logos-sprite($iconName);
+  $iconHeight: press-logos-sprite-height($iconName);
+  $iconWidth: press-logos-sprite-width($iconName);
+  width: $iconWidth;
+  height: $iconHeight;
+  margin-left: -$iconWidth / 2;
+}
+
+
+
+// MAKER OF THUMBNAILS
+
+
+@mixin shuffler_thumb ($width, $height, $margin) {
+  position: relative;
+  float: left;
+  margin: $margin;
+  width: $width;
+  height: $height;
+  background-image: image-url("web/empty_thumb.png");
+  text-shadow: 0 0.1rem 0.3rem $SF_BLACK9;
+} 
+
+
+
+// MAKER OF CAPTIONS
+@mixin shuffler_thumb_title ($bottom, $hasHover) {
+  
+  color: $SF_WHITE;
+  width: 100%;
+  position: absolute;
+  bottom: $bottom;
+  @include box-sizing;
+  background-color: rgba($SF_PUREBLACK, 0.5);
+  // border-top: 1px solid rgba(0,0,0,0.1);
+  
+  @if $hasHover {
+    
+    z-index: 2;
+    @include transition (all 0.2s ease-in);
+    &:hover { background-color: rgba($SF_PUREBLACK, 0.5); }
+  }
+}
+
+
+
+
+
+@mixin shuffler_ui_bigPlay () {
+  
+ position: absolute; width: 100%; height: 100%; z-index: 2; top: 0; left: 0; opacity: 0; @include transition(all 0.15s ease-out 0);
+ &:before { content:'\25ba'; position: absolute; height: 48px; width: 48px; font-size: 4rem; color: $SF_WHITE; @include icontype;
+ left: 50%; top: 50%; margin: -3.4rem 0 0 -2.4rem; text-align: center;
+}
+ &:hover { opacity: 1; }
+}
+
+
+
+
+
+
+@mixin shuffler_obj_media {
+  position: absolute;
+  @include clearfix;
+  
+  div:first-child { float:left; width: 50%; }
+  div:last-child { float: right; width: 50%; }
+}
+
+@mixin shuffler_obj_half {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  
+  div:first-child { width: 100%; height: 50%; }
+  div:last-child { width: 100%; height: 50%; }
+}
+
+
+@mixin shuffler_obj_full { height: 100%; width: 100%; position: relative; }
+
+
+
+
+
+
+  /*Mr body typeface and main typeface, change in one place and the whole website changes ;)*/
+  @mixin bodytype { font-family: Arial, sans-serif;  text-transform:none;}
+  @mixin headtype { font-family: 'brandon-grotesque', Arial, sans-serif; text-transform: uppercase; }
+  @mixin icontype { font-family: '☺';}
+  
+  @mixin hardwarehack { 
+    // -webkit-transform:translate3d(0, 0, 0); 
+    // -webkit-perspective: 1000;
+    // -webkit-backface-visibility: hidden; 
+  }
+  
+  @mixin animation {
+    // -webkit-tranform: translateZ(0);
+  }
+  @mixin webkitBSOD {
+    // -webkit-tranform: translateZ(0);
+    // -webkit-transition: all 0s linear 0s;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @mixin translatehack {
+    -webkit-transform:translate3d(0, 0, 0); 
+  }
+  @mixin trunk { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  
+  
+
+  
+  @mixin whitespace {
+      white-space: pre;
+      /* CSS 2.0 */
+      white-space: pre-wrap;
+      /* CSS 2.1 */
+      white-space: pre-line;
+      /* CSS 3.0 */
+      white-space: -pre-wrap;
+      /* Opera 4-6 */
+      white-space: -o-pre-wrap;
+      /* Opera 7 */
+      white-space: -moz-pre-wrap;
+      /* Mozilla */
+      white-space: -hp-pre-wrap;
+      /* HP Printers */
+      word-wrap: break-word;
+      /* IE 5+ */ 
+  }
+  
+   // PROGRESS BAR STYLING
+  @mixin RedGradProg {  
+    @include box-shadow( 0px -2px 2px rgba(253,0,0,0.8) inset); 
+    border-right: 1px solid rgba(253,116,19,0.2);
+    background: rgb(253,116,19); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(253,116,19,1) 0%, rgba(252,55,55,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(253,116,19,1)), color-stop(100%,rgba(252,55,55,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(253,116,19,1) 0%,rgba(252,55,55,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(253,116,19,1) 0%,rgba(252,55,55,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(253,116,19,1) 0%,rgba(252,55,55,1) 100%); /* IE10+ */
+    background: linear-gradient(top,  rgba(253,116,19,1) 0%,rgba(252,55,55,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fd7413', endColorstr='#fc3737',GradientType=0 ); /* IE6-9 */
+  }
+  
+  @mixin box-sizing { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+  
+  // image replacement the Jeffrey Zeldman 2012 way
+  //  http://www.zeldman.com/2012/03/01/replacing-the-9999px-hack-new-image-replacement/ 
+  @mixin image-replace { text-indent: 100%;  white-space: nowrap; overflow: hidden; }
+  // a bit more fail safe version
+  @mixin image-replace-doubled { text-indent: 200%; white-space: nowrap; overflow: hidden; }
+  
+  
+  @mixin clearfix {
+    &:after {
+      visibility: hidden;
+      display: block;
+      content: "";
+      clear: both;
+      height: 0;
+    }
+  }
+  
+
+  @mixin keyframes ($name) {
+    @-webkit-keyframes $name { @content }
+       @-moz-keyframes $name { @content }
+         @-o-keyframes $name { @content }
+            @keyframes $name { @content }
+  }
+
+  @mixin animate ($name, $duration, $type:infinite, $ease:linear, $delay: 0) {
+    -webkit-animation: $name $duration $delay $type $ease;
+       -moz-animation: $name $duration $delay $type $ease;
+         -o-animation: $name $duration $delay $type $ease;
+            animation: $name $duration $delay $type $ease;
+  }
+
+
+
+// =======================================================================
+// ANIMATIONS
+// =======================================================================
+
+  // @include keyframes (shake) {
+  //   0%, 100% { @include transform(rotateZ(0deg));}
+  //   33% { @include transform(rotateZ(10deg));}
+  //   66% { @include transform(rotateZ(-10deg));}
+  // }
+
+    @include keyframes (flash) {
+    0% { 
+      color:rgba($SF_GRAY22, 1); 
+      // @include transform(rotateZ(0deg));
+    }
+    50% { 
+      color:rgba($SF_BLUE, 1);
+    }
+    100% {
+      color:rgba($SF_GRAY22, 1); 
+      // @include transform(rotateZ(359deg));
+    }
+  }
+
+      @include keyframes (lightflash) {
+    0%, 100% { 
+      color:rgba($SF_BLUE, 1); 
+      // @include transform(rotateZ(0deg));
+    }
+    50% { 
+      color:$SF_WHITE4;
+    }
+  }
+
+        @include keyframes (errorflash) {
+    50% { 
+      background-color:$SF_LIGHTRED;
+    }
+  }
+  
+
+
+@include keyframes (yellowFlash) {
+  50% {
+    opacity: 0;
+  }
+}
+// MAGIC CLASSES
+// 
+ .fill_parent {
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+ }
+
+
+
+%button {
+  &[disabled] {
+    opacity: 0.5;
+  }
+  // @include webkitBSOD;
+  // @include headtype;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  text-shadow: 0 0.1rem 0.1rem rgba($SF_PUREBLACK, 0.15);
+  @include border-radius(0.2rem);
+  padding: 0.3rem 1.9rem;
+  min-width:10rem;
+  color:$SF_WHITE;
+  font-size: 1.3rem;
+  border:none;
+    @include box-shadow(
+      inset 0 0 0 1px rgba($SF_PUREBLACK, 0.05)
+    );
+  // border:0.1rem solid;
+  &:hover, &.hover {
+    @include box-shadow(
+      inset 0 0 0 1px rgba($SF_PUREBLACK, 0.15)
+    );
+
+    text-shadow: 0 0.1rem 0.1rem rgba($SF_PUREBLACK, 0.5);
+  }
+  &:active, &.active {
+    @include box-shadow(
+      inset 0 1px 2px rgba($SF_PUREBLACK, 0.4)
+    );
+  }
+}
+
+
+  
+ 

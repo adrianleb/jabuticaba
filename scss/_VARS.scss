@@ -1,0 +1,135 @@
+// =======================================================================
+// VARIABLES
+// =======================================================================
+
+// size related
+// =====================
+  $TOTALWIDTH: 102rem;
+  $TOPBARHEIGHT: 5rem;
+  $TOPBARTHUMBSIZE: 2rem;
+
+  $BASEFONTSIZE:16;
+  $BASELINEHEIGHT:1.5;
+  $BASELINE:20;
+  $REM:10;
+  
+
+// color related
+// =====================
+// basics
+
+  
+  $SF_WHITE: #FFFFFF;
+  $SF_WHITE2: #fcfcfc;
+  $SF_WHITE3: #fafafa;
+  $SF_WHITE4: #f0fbff;
+
+
+
+// unnammed
+  $SF_PUREBLACK: #000000;
+  $SF_BLACK: #212121;
+  $SF_SIGBLACK: #1C1C21; // http://colourness.com/#1C1C21
+  $SF_BLACK1: #333333;
+  $SF_BLACK2: #202020;
+  $SF_BLACK3: #1F1F1F;
+  $SF_BLACK4: #2d2d2d;
+  $SF_BLACK5: #3f3f3f;
+  $SF_BLACK6: #101010;
+  $SF_BLACK7: #010101;
+  $SF_BLACK8: #393939;
+  $SF_BLACK9: #222222;
+  $SF_BLACK10: #383838;
+  $SF_BLACK11: #262626;
+  $SF_BLACK12: #121212;
+  $SF_BLACK13: #1A1A1A;
+  $SF_BLACK14: #1c1c1c;
+  $SF_BLACK15: #292929;
+  $SF_BLACK16: #2b2b2b;
+  $SF_BLACK17: #2e2e2e;
+
+  $SF_GRAY: #777;
+  $SF_GRAYISH:darken(white, 10%);
+  $SF_LIGHTGRAY: #F7F7F7;
+  $SF_DARKGRAY:#555;
+  $SF_GRAYBTN:#F4F4F4;
+  $SF_DIRTYGREY:#E8E9E8;
+  $SF_MIDGRAY:#F6F6F6;
+
+  $SF_GRAY1: #CCCCCC;
+  $SF_GRAY2: #F1F1F1;
+  $SF_GRAY3: #E2E2E2;
+  $SF_GRAY4: #777777;
+  $SF_GRAY5: #999999;
+  $SF_GRAY6: #DDDDDD;
+  $SF_GRAY7: #EEEEEE;
+  $SF_GRAY8: #F8F8F8;
+  $SF_GRAY9: #FBFBFB;
+  $SF_GRAY10: #7A7A7A;
+  $SF_GRAY11: #666666;
+  $SF_GRAY12: #363636;
+  $SF_GRAY13: #E8E8E8;
+  $SF_GRAY14: #D8D8D8;
+  $SF_GRAY15: #555555;
+  $SF_GRAY16: #969AA0;
+  $SF_GRAY17: #484848;
+  $SF_GRAY19: #F2F2F2;
+  $SF_GRAY20: #A7A7A7;
+  $SF_GRAY21: #f5f5f5;
+  $SF_GRAY22: #606060;
+  $SF_GRAY24: #969696;
+  $SF_GRAY25: #ebebeb;
+  $SF_GRAY26: #f0f0f0;
+  $SF_GRAY27: #bfbfbf;
+  $SF_GRAY28: #e0e0e0;
+  $SF_GRAY29: #dbdbdb;
+  $SF_GRAY32: #4d4d4d;
+  $SF_GRAY33: #808080;
+  $SF_GRAY34: #737373;
+  $SF_GRAY35: #dedede;
+  $SF_GRAY36: #c4c4c4;
+  $SF_GRAY37: #e6e7e6;
+
+
+// general
+
+
+
+
+  $SF_YELLOW:#FFE6B0;
+  $SF_DARKYELLOW: #ffdd94;
+  $SF_DARKYELLOW2: #ffcd61;
+
+  $SF_BLUE: #00AAEF;
+  $SF_TWITTERBLUE: #00ABED; 
+  $SF_FBBLUE: #3B5997;
+  $SF_TUMBLRBLUE: #2C4762;
+
+  $SF_RED:#F5351A;
+  $SF_LIGHTRED:#f98f80;
+
+  $SF_GREEN: #00a365;
+
+
+
+// z-index stack
+// ====================
+  $heaven_high: 9;
+  $space_high: 8;
+  $atmosphere_high:7;
+  $sky_high:6;
+  $clouds_high:5;
+  $kite_high:4;
+  $building_high:3;
+  $house_high:2;
+  $desk_high:1;
+  $floor_high:0;
+
+  $basement_high:-4;
+
+
+// viewport sizes
+$ipad_breakpoint: 800px;
+$mobile_breakpoint: 600px;
+$ipad_landscape_breakpoint: 1025px;
+

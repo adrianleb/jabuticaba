@@ -1,0 +1,53 @@
+
+
+@import "compass";
+@import "compass/reset";
+
+@import "_VARS";
+@import "_mixins";
+@import "_fonts";
+
+html {
+  font-size: 62.5%;
+}
+
+body { 
+  background-color: $SF_LIGHTGRAY;
+  font-size: 1.6rem;
+  font-family: "brandon-grotesque",Arial,sans-serif;
+  text-transform: uppercase;
+  overflow-x: hidden;
+  min-width: 100rem;
+}
+
+*,*:before, *:after {
+  box-sizing:border-box;
+}
+* {
+  position:relative;
+  margin:0;
+  padding:0;
+  -webkit-font-smoothing:antialiased;
+}
+
+
+
+@import "_typography";
+@import "_header";
+@import "_resource";
+@import "_container";
+@import "_menu";
+@import "_changelog";
+// moree
+
+
+
+// CLEARFIX the 'Beat that clear fix' 2012 way
+// http://www.css-101.org/articles/clearfix/latest-new-clearfix-so-far.php
+// ======================================================================
+@mixin clearfix {
+ &:after { content:""; display:table; clear:both; }
+}
+
+
+
