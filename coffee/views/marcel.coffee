@@ -14,7 +14,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
   roomName: 'room-14'
 
-  initialize: ->    
+  initialize: ->
     @incommingContext = new webkitAudioContext()
     @outputContext = new webkitAudioContext()
 
@@ -28,6 +28,19 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     @room.onUserLeft = (user_id) =>
       console.log('onUserLeft: ' + user_id)
 
+
+    @incommingBuffer = @incommingContext.createBufferSource()
+    @incommingBuffer.connect(@outputContext.destination)
+    @incommingBuffer.buffer = 
+    @incommingBuffer.start(0)
+
+
+    @incommingContext.decodeAudioData @incommingBuffer, ((buffer) =>
+      console.log 'income', buffer
+    ), (err) =>
+      console.log err, 'ERRORRRRR'
+
+    
     @room.onmessage = (msg) =>
       # @$('#messages').append(msg + "<br/>")
       @$('#messages').append(msg)
@@ -36,6 +49,10 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       d = Base64Binary.decodeArrayBuffer(msg)
       console.log 'hai', d
       @callMe(d)
+
+
+
+
       
 
     @render()
@@ -49,11 +66,10 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     console.log 'CALLLLL MEEWE'
     @incommingContext.decodeAudioData d, ((buffer) =>
       console.log 'income', buffer
-      inBuffer = buffer
       mySource = @outputContext.createBufferSource()
-      mySource.buffer = inBuffer
+      mySource.buffer = buffer
       mySource.connect(@outputContext.destination)
-      mySource.noteOn(0)
+      mySource.start(0)
 
     ), (err) =>
       console.log err, 'ERRORRRRR'

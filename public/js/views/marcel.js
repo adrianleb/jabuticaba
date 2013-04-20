@@ -39,6 +39,14 @@
       this.room.onUserLeft = function(user_id) {
         return console.log('onUserLeft: ' + user_id);
       };
+      this.incommingBuffer = this.incommingContext.createBufferSource();
+      this.incommingBuffer.connect(this.outputContext.destination);
+      this.incommingBuffer.buffer = this.incommingBuffer.start(0);
+      this.incommingContext.decodeAudioData(this.incommingBuffer, (function(buffer) {
+        return console.log('income', buffer);
+      }), function(err) {
+        return console.log(err, 'ERRORRRRR');
+      });
       this.room.onmessage = function(msg) {
         var d;
         _this.$('#messages').append(msg);
@@ -58,13 +66,12 @@
       var _this = this;
       console.log('CALLLLL MEEWE');
       return this.incommingContext.decodeAudioData(d, (function(buffer) {
-        var inBuffer, mySource;
+        var mySource;
         console.log('income', buffer);
-        inBuffer = buffer;
         mySource = _this.outputContext.createBufferSource();
-        mySource.buffer = inBuffer;
+        mySource.buffer = buffer;
         mySource.connect(_this.outputContext.destination);
-        return mySource.noteOn(0);
+        return mySource.start(0);
       }), function(err) {
         return console.log(err, 'ERRORRRRR');
       });
