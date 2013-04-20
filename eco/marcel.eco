@@ -1,0 +1,12 @@
+
+<h1>Marcel</h1>
+
+<a id="open-room" href="#">Open Room</a>
+<a id="join-room" href="#">Join Room</a>
+
+<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>
+<br/>
+
+<div id="messages">
+</div>
+
