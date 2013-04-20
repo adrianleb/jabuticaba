@@ -6,16 +6,158 @@
 
     function AudioBoss() {}
 
-    AudioBoss.prototype.dsp = null;
+    AudioBoss.prototype.effects = {};
+
+    AudioBoss.prototype.scales = {
+      'aMinor': [33, 35, 36, 38, 40, 41, 43]
+    };
 
     AudioBoss.prototype.initialize = function() {
-      return this.dsp = audioLib.Sink(function(sampleBuffer) {
-        return console.log('audioLib started');
+      this.context = new webkitAudioContext();
+      this.initGenerators();
+      this.initExtendedScale('aMinor');
+      return this.initEvents();
+    };
+
+    AudioBoss.prototype.initGenerators = function() {
+      this.oscGain = this.context.createGainNode();
+      this.oscGain.gain.value = 0;
+      this.oscGain.connect(this.context.destination);
+      this.osc1 = this.context.createOscillator();
+      this.osc1.type = 0;
+      this.osc1.connect(this.oscGain);
+      this.osc1.noteOn(0);
+      this.osc2 = this.context.createOscillator();
+      this.osc2.type = 3;
+      this.osc2.connect(this.oscGain);
+      return this.osc2.noteOn(0);
+    };
+
+    AudioBoss.prototype.initEvents = function() {
+      var _this = this;
+      $(window).on('audio_gen_note_on', function(e, data) {
+        var freq;
+        freq = _this.floatToFreq(data['x']);
+        _this.setOscFrequencies(freq);
+        return _this.ramp(0.5 - data['y'] / 2, 0.2);
       });
+      return $(window).on('audio_gen_note_off', function(e) {
+        return _this.ramp(0, 0.5);
+      });
+    };
+
+    AudioBoss.prototype.ramp = function(value, length) {
+      var now;
+      now = this.context.currentTime;
+      this.oscGain.gain.cancelScheduledValues(now);
+      this.oscGain.gain.setValueAtTime(this.oscGain.gain.value, now);
+      return this.oscGain.gain.linearRampToValueAtTime(value, now + length);
+    };
+
+    AudioBoss.prototype.setOscFrequencies = function(freq) {
+      this.osc1.frequency.value = freq;
+      return this.osc2.frequency.value = freq;
+    };
+
+    AudioBoss.prototype.floatToFreq = function(f, scale) {
+      if (scale == null) {
+        scale = 'aMinor';
+      }
+      return this.scales[scale][Math.round(f * (this.scales[scale].length - 1))];
+    };
+
+    AudioBoss.prototype.initExtendedScale = function(scale) {
+      var i, j, l, v, _i, _len, _ref, _results;
+      l = this.scales[scale].length;
+      _ref = this.scales[scale];
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        v = _ref[i];
+        _results.push((function() {
+          var _j, _results1;
+          _results1 = [];
+          for (j = _j = 0; _j <= 5; j = ++_j) {
+            _results1.push(this.scales[scale][i + (j * l)] = Math.pow(2, ((v + (12 * j)) - 69) / 12) * 440);
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
+    AudioBoss.prototype.initEffects = function() {
+      var _this = this;
+      this.tuna = new Tuna(this.context);
+      this.effects['overdrive'] = new this.tuna.Overdrive({
+        outputGain: 0.3,
+        drive: 0.5,
+        curveAmount: 0.4,
+        algorithmIndex: 2,
+        bypass: true
+      });
+      this.effects['delay'] = new this.tuna.Delay({
+        feedback: 0,
+        delayTime: 250,
+        wetLevel: 0.5,
+        dryLevel: 0.5,
+        bypass: true
+      });
+      this.effects['chorus'] = new this.tuna.Chorus({
+        feedback: 0.5,
+        rate: 1.5,
+        delay: 0.005,
+        bypass: true
+      });
+      this.effects['tremolo'] = new this.tuna.Tremolo({
+        intensity: 0.3,
+        rate: 0.1,
+        stereoPhase: 0,
+        bypass: false
+      });
+      return _.each(this.effects, function(effect) {
+        _this.source.connect(effect.input);
+        return effect.connect(_this.context.destination);
+      });
+    };
+
+    AudioBoss.prototype.silenceEffects = function() {
+      var effect, _i, _len, _ref, _results;
+      _ref = this.effects;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        effect = _ref[_i];
+        _results.push(effect.bypass = true);
+      }
+      return _results;
+    };
+
+    AudioBoss.prototype.setEffect = function(effectName, v1, v2) {
+      if (effectName === 'overdrive') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].drive = v1;
+        this.effects[effectName].curveAmount = v2;
+      }
+      if (effectName === 'overdrive') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].feedback = v1;
+        this.effects[effectName].delayTime = v2;
+      }
+      if (effectName === 'chorus') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].rate = v1 * 20;
+        this.effects[effectName].feedback = v2;
+      }
+      if (effectName === 'tremolo') {
+        this.effects[effectName].bypass = false;
+        this.effects[effectName].rate = v1 * 8;
+        return this.effects[effectName].intensity = v2;
+      }
     };
 
     return AudioBoss;
 
   })();
+
+  window.AudioBoss = new AudioBoss();
 
 }).call(this);

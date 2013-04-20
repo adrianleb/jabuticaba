@@ -38,7 +38,6 @@ JST['home'] = function(__obj) {
   }
   (function() {
     (function() {
-    
       __out.push('  <section id="roll" class="roll"></section>\n');
     
     }).call(this);
@@ -88,7 +87,7 @@ JST['node_list/wrap'] = function(__obj) {
     (function() {
       var node, _i, _len, _ref;
     
-      __out.push('<p>IM A LIST OF USER NODES OK?</p>\n<div class="nodes">\n  ');
+      __out.push('<div class="nodes">\n  ');
     
       console.log(this.activeNodes);
     
@@ -101,7 +100,7 @@ JST['node_list/wrap'] = function(__obj) {
         console.log(node);
         __out.push('\n    <div class="node" data-id="');
         __out.push(__sanitize(node.id));
-        __out.push('">\n      <p>');
+        __out.push('">\n      <p class="node_alias">');
         __out.push(__sanitize(node.alias));
         __out.push('</p>\n    </div>\n  ');
       }
@@ -154,7 +153,7 @@ JST['audio_interface/wrap'] = function(__obj) {
   (function() {
     (function() {
     
-      __out.push('<p>IM AN AUDIO INTERFACE, LOOK AT ME IM SO SEXYyyy</p>');
+      __out.push('<div class="audio_source"></div>\n<div id="audio-modulator" class="audio_module audio_modulator">\n  <span class="audio_module_point"></span>\n</div>\n<div id="audio-generator" class="audio_module audio_generator">\n  <span class="audio_module_point"></span>\n</div>\n<div class="audio_output"></div>');
     
     }).call(this);
     
@@ -201,8 +200,12 @@ JST['marcel'] = function(__obj) {
   }
   (function() {
     (function() {
+<<<<<<< HEAD
     
       __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a> === \n<a id="join-room" href="#">Join Room</a>\n<br/>\n\n<a id="generate-sound" href="#">Generate sound</a>\n<br/>\n\n\nNew message:<br>\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\nMessages:<br>\n<div id="messages">\n</div>\n\n');
+=======
+      __out.push('\n<h1>Marcel</h1>\n\n<a id="open-room" href="#">Open Room</a>\n<a id="join-room" href="#">Join Room</a>\n\n<input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>\n<br/>\n\n<div id="messages">\n</div>\n\n');
+>>>>>>> 79adbf6c8a33e2c8b263e66e7596d81790b0d3e0
     
     }).call(this);
     

@@ -14,12 +14,12 @@ class Jabuticaba.Views.NodeList extends Backbone.View
       alias: 'ur mom'
     },
     {
-      id:'1'
-      alias: 'ur mom'
+      id:'2'
+      alias: 'ur dad'
     },
     {
-      id:'1'
-      alias: 'ur mom'
+      id:'3'
+      alias: 'ur uncle'
     }
   ]
   initialize: ->

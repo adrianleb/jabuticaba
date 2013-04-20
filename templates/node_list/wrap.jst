@@ -39,7 +39,7 @@ function(__obj) {
     (function() {
       var node, _i, _len, _ref;
     
-      __out.push('<p>IM A LIST OF USER NODES OK?</p>\n<div class="nodes">\n  ');
+      __out.push('<div class="nodes">\n  ');
     
       console.log(this.activeNodes);
     
@@ -52,7 +52,7 @@ function(__obj) {
         console.log(node);
         __out.push('\n    <div class="node" data-id="');
         __out.push(__sanitize(node.id));
-        __out.push('">\n      <p>');
+        __out.push('">\n      <p class="node_alias">');
         __out.push(__sanitize(node.alias));
         __out.push('</p>\n    </div>\n  ');
       }

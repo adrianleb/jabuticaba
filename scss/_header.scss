@@ -1,0 +1,36 @@
+.header {
+  width: 100%;
+  background-color: black;
+  height: 5rem;
+  color: white;
+}
+
+
+.logo {
+  color: $SF_RED;
+  font-weight: 600;
+  line-height: 5rem;
+  margin-left: 2.5%;
+  display: inline-block;
+
+  &:after {
+    content: "";
+    height: 1px;
+    width: 850%;
+    background-color: red;
+    position: absolute;
+    top: 50%;
+    left: 120%;
+  }
+}
+
+.tag_line {
+  float: right;
+  position: absolute;
+  top: 0;
+  line-height: 5rem;
+  font-style: italic;
+  color: $SF_RED;
+  text-transform: none;
+  right: 2.5%;
+}

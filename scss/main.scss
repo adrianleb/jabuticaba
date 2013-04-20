@@ -9,6 +9,7 @@
 
 html {
   font-size: 62.5%;
+  height: 100%;
 }
 
 body { 
@@ -18,6 +19,7 @@ body {
   text-transform: uppercase;
   overflow-x: hidden;
   min-width: 100rem;
+  height: 100%;
 }
 
 *,*:before, *:after {
@@ -27,12 +29,15 @@ body {
   position:relative;
   margin:0;
   padding:0;
+    &:active {
+    cursor: crosshair;
+  }
   -webkit-font-smoothing:antialiased;
 }
 
 
 
-
+@import "_header";
 @import "_audio_interface";
 @import "_node_list";
 // moree
