@@ -2,8 +2,10 @@ class AudioBoss
 
   effects: {}
 
-  scales: 
-    'aMinor': [33, 35, 36, 38, 40, 41, 43]
+  rootScales: 
+    'aMinor': [21, 23, 24, 26, 28, 29, 31]
+
+  scale: []
 
   source: false
 
@@ -51,9 +53,20 @@ class AudioBoss
     @osc1.noteOn(0)
 
     @osc2 = @context.createOscillator()
-    @osc2.type = 1
+    @osc2.type = 2
     @osc2.connect(@oscGain)
     @osc2.noteOn(0)
+
+    @oscOsc = @context.createOscillator()
+    @oscOsc.type = 0
+    @oscOsc.frequency.value = 0.25
+    @oscOsc.noteOn(0)
+
+    @oscOscGain = @context.createGainNode()
+    @oscOscGain.gain.value = 0.5
+    @oscOsc.connect(@oscOscGain)
+
+    @oscOscGain.connect(@osc1.frequency)
 
   initEvents: ->
     $(window).on 'audio_gen_note_on', (e, data) =>
@@ -63,6 +76,9 @@ class AudioBoss
     
     $(window).on 'audio_gen_note_off', (e) =>
       @ramp(0, 0.5)
+
+    $(window).on 'octave', (e, data) =>
+      @initExtendedScale('aMinor', data['octave'])
 
   ramp: (value, length) ->
     now = @context.currentTime
@@ -75,19 +91,21 @@ class AudioBoss
     @osc2.frequency.value = freq
 
   # Transform a float into a frequency from scale
-  floatToFreq: (f, scale='aMinor') ->
+  floatToFreq: (f) ->
     
     #return Math.min(0, Math.max(@scales[scale][Math.round((f*(@scales[scale].length-1)))], @scales[scale].length-1)
-    return @scales[scale][Math.round((f*(@scales[scale].length-1)))]
+    return @scale[Math.round((f*(@scale.length-1)))]
 
   # This function takes a low-pitch, array 
   # of numbered notes and transforms them into 
   # a longer array of frequencies.
-  initExtendedScale: (scale) ->
-    l = @scales[scale].length
-    for v, i in @scales[scale]
-      for j in [0..5]
-        @scales[scale][i+(j*l)] = Math.pow(2, ((v + (12*j))-69)/12) * 440
+  initExtendedScale: (scale, octave=3) ->
+    l = @rootScales[scale].length
+    
+    @scale=[]
+    for v, i in @rootScales[scale]
+      for j in [0..2]
+        @scale[i+(j*l)] = Math.pow(2, ((v + (12*(j+octave)))-69)/12) * 440
 
   initEffects: ->
 
