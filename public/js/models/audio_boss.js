@@ -31,16 +31,28 @@
 
     AudioBoss.prototype.initEvents = function() {
       var _this = this;
-      return $(window).on('audio_gen_note_on', function(e, data) {
-        return console.log(_this.floatToFreq(data['x']));
+      $(window).on('audio_gen_note_on', function(e, data) {
+        var freq;
+        freq = _this.floatToFreq(data['x']);
+        console.log(freq);
+        return _this.setOscFrequencies(freq);
       });
+      return $(window).on('audio_gen_note_off', function(e) {
+        console.log('note off');
+        return _this.setOscFrequencies(0);
+      });
+    };
+
+    AudioBoss.prototype.setOscFrequencies = function(freq) {
+      this.osc1.frequency.value = freq;
+      return this.osc2.frequency.value = freq;
     };
 
     AudioBoss.prototype.floatToFreq = function(f, scale) {
       if (scale == null) {
         scale = 'aMinor';
       }
-      return this.scales[scale][Math.round(f * this.scales[scale].length)];
+      return this.scales[scale][Math.round(f * (this.scales[scale].length - 1))];
     };
 
     AudioBoss.prototype.initExtendedScale = function(scale) {
