@@ -7,9 +7,9 @@ class Jabuticaba.Views.Marcel extends Backbone.View
   el: "body"
 
   events:
-    '#send click': 'send'
-    '#open-room': 'openRoom'
-    '#join-room': 'joinRoom'
+    'click #send': 'send'
+    'click #open-room': 'openRoom'
+    'click #join-room': 'joinRoom'
 
 
   initialize: ->
@@ -30,19 +30,20 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
 
   render: ->
-    console.debug('rendorz')
-    @$el.find('#container').append(@template())
+    @$el.append(@template())
 
-
-  send: ->
-    @room.send(@$('#msg').val())
-
+  send: (e) ->
+    nop e
+    cl('sending: ' + $('#msg').val())
+    @room.send($('#msg').val())
   
-  openRoom: ->
+  openRoom: (e) ->
+    nop e
     # create the room
     @room.open('room')
 
-  joinRoom: ->
+  joinRoom: (e) ->
+    nop e
     @room.connect('room')
 
 

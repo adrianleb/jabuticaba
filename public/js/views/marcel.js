@@ -16,9 +16,9 @@
     Marcel.prototype.el = "body";
 
     Marcel.prototype.events = {
-      '#send click': 'send',
-      '#open-room': 'openRoom',
-      '#join-room': 'joinRoom'
+      'click #send': 'send',
+      'click #open-room': 'openRoom',
+      'click #join-room': 'joinRoom'
     };
 
     Marcel.prototype.initialize = function() {
@@ -38,19 +38,22 @@
     };
 
     Marcel.prototype.render = function() {
-      console.debug('rendorz');
-      return this.$el.find('#container').append(this.template());
+      return this.$el.append(this.template());
     };
 
-    Marcel.prototype.send = function() {
-      return this.room.send(this.$('#msg').val());
+    Marcel.prototype.send = function(e) {
+      nop(e);
+      cl('sending: ' + $('#msg').val());
+      return this.room.send($('#msg').val());
     };
 
-    Marcel.prototype.openRoom = function() {
+    Marcel.prototype.openRoom = function(e) {
+      nop(e);
       return this.room.open('room');
     };
 
-    Marcel.prototype.joinRoom = function() {
+    Marcel.prototype.joinRoom = function(e) {
+      nop(e);
       return this.room.connect('room');
     };
 

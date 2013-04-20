@@ -12,3 +12,9 @@ window.prettyJson = (json) ->
       cls = "boolean"
     else cls = "null"  if /null/.test(match)
     "<span class=\"" + cls + "\">" + match + "</span>"
+
+window.cl = (crap) ->
+  console.debug(crap)
+
+window.nop = (e) ->
+  e.preventDefault()
