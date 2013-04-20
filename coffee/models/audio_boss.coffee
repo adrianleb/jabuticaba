@@ -80,6 +80,9 @@ class AudioBoss
     $(window).on 'octave', (e, data) =>
       @initExtendedScale('aMinor', data['octave'])
 
+    $(window).on 'audio_mod', (e, data) =>
+      @setEffect(data['mod_type'], data['x'], data['y'])
+
   ramp: (value, length) ->
     now = @context.currentTime
     @oscGain.gain.cancelScheduledValues(now)
