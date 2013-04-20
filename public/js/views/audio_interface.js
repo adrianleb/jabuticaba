@@ -60,21 +60,24 @@
 
     AudioInterface.prototype.setModulePointCoord = function(e, callback) {
       var coord, eX, eY, elH, elW;
-      elW = e.currentTarget.clientWidth;
-      elH = e.currentTarget.clientHeight;
-      eX = e.offsetX;
-      eY = e.offsetY;
-      coord = {
-        x: eX / elW,
-        y: eY / elH
-      };
-      if (coord.x <= 1 && coord.y <= 1) {
-        this.$(e.currentTarget).find('.audio_module_point').css({
-          top: (coord.y * 100) + "%",
-          left: (coord.x * 100) + "%"
-        });
-        if (callback != null) {
-          return callback(coord);
+      if (!$(e.target).is('.audio_module_point')) {
+        elW = e.currentTarget.clientWidth;
+        elH = e.currentTarget.clientHeight;
+        eX = e.offsetX;
+        eY = e.offsetY;
+        console.log(elW, elH, eX, eY);
+        coord = {
+          x: eX / elW,
+          y: eY / elH
+        };
+        if (coord.x <= 1 && coord.y <= 1) {
+          this.$(e.currentTarget).find('.audio_module_point').css({
+            top: (coord.y * 100) + "%",
+            left: (coord.x * 100) + "%"
+          });
+          if (callback != null) {
+            return callback(coord);
+          }
         }
       }
     };
