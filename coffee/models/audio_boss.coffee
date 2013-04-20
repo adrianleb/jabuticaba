@@ -24,6 +24,10 @@ class AudioBoss
 
     @initExtendedScale('aMinor')
   
+  # Transform a float into a frequency from scale
+  floatToFreq: (f, scale='aMinor') ->
+    return @scales[scale][Math.round((f*@scales[scale]))]
+
   # This function takes a low-pitch, array 
   # of numbered notes and transforms them into 
   # a longer array of frequencies.

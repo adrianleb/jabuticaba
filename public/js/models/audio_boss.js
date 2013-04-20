@@ -28,6 +28,13 @@
       return this.initExtendedScale('aMinor');
     };
 
+    AudioBoss.prototype.floatToFreq = function(f, scale) {
+      if (scale == null) {
+        scale = 'aMinor';
+      }
+      return this.scales[scale][Math.round(f * this.scales[scale])];
+    };
+
     AudioBoss.prototype.initExtendedScale = function(scale) {
       var i, j, l, v, _i, _len, _ref, _results;
       l = this.scales[scale].length;
