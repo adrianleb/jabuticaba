@@ -24,7 +24,7 @@
       'click #generate-sound': 'generateSound'
     };
 
-    Marcel.prototype.roomName = 'room-9';
+    Marcel.prototype.roomName = 'room-14';
 
     Marcel.prototype.initialize = function() {
       var _this = this;
@@ -42,7 +42,7 @@
       this.room.onmessage = function(msg) {
         var d;
         _this.$('#messages').append(msg);
-        d = Base64Binary.decodeArrayBuffer(sound);
+        d = Base64Binary.decodeArrayBuffer(msg);
         console.log('hai', d);
         return _this.callMe(d);
       };
@@ -72,7 +72,6 @@
 
     Marcel.prototype.send = function(e) {
       nop(e);
-      cl('sending: ' + $('#msg').val());
       return this.room.send($('#msg').val());
     };
 
@@ -99,7 +98,8 @@
         cl('onaudioprocess');
         msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer);
         cl('sending: ' + msg);
-        return _this.room.send(msg);
+        _this.room.send(msg);
+        return e.outputBuffer.getChannelData(0).set(e.inputBuffer.getChannelData(0));
       };
       this.o.start(0);
       this.g = this.outputContext.createGainNode();
