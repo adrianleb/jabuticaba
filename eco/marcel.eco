@@ -8,7 +8,6 @@
 <a id="generate-sound" href="#">Generate sound</a>
 <br/>
 
-
 New message:<br>
 <input type="text" id="msg" value="braca"></input><a id="send" href="#">Send</a>
 <br/>

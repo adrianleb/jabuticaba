@@ -5,21 +5,45 @@ class AudioBoss
   scales: 
     'aMinor': [33, 35, 36, 38, 40, 41, 43]
 
+  source: false
+
   initialize: ->
     @context = new webkitAudioContext()
     
-    @initGenerators()
-    #@initEffects()
+    @initOutput() # Connect the output
+    @initInput() # Connect the source
+
+    @initGenerators() # Init and connect the generators
+    @initEffects() # Init and connect the effects
 
     @initExtendedScale('aMinor')
     
-    @initEvents()
+    @initEvents() # Listen!
+
+  initOutput: ->
+    @outGainNode = @context.createGainNode()
+    @outGainNode.gain.value = 0.7
+    @outGainNode.connect(@context.destination)
+
+  initInput: ->
+    @sourcePanner = @context.createPanner()
+    @sourcePanner.setPosition(0.7, 0, 0)
+    @sourcePanner.connect(@outGainNode)
+
+    @sourceGainNode = @context.createGainNode()
+    @sourceGainNode.gain.value = 0.5
+    @sourceGainNode.connect(@sourcePanner)
 
   initGenerators: ->
 
+    @oscPanner = @context.createPanner()
+    @oscPanner.setPosition(-0.7,0,0)
+
     @oscGain = @context.createGainNode()
     @oscGain.gain.value = 0
-    @oscGain.connect(@context.destination)
+    @oscGain.connect(@oscPanner)
+
+    @oscPanner.connect(@outGainNode)
 
     @osc1 = @context.createOscillator()
     @osc1.type = 0
@@ -67,6 +91,9 @@ class AudioBoss
 
   initEffects: ->
 
+    if not @source
+      return "Oh no!"
+
     @tuna = new Tuna(@context)
 
     @effects['overdrive'] = new @tuna.Overdrive(
@@ -80,8 +107,8 @@ class AudioBoss
     @effects['delay'] = new @tuna.Delay(
       feedback: 0
       delayTime: 250
-      wetLevel: 0.5
-      dryLevel: 0.5
+      wetLevel: 1
+      dryLevel: 1
       bypass: true
     )
 
@@ -101,7 +128,7 @@ class AudioBoss
 
     _.each @effects, (effect) =>
       @source.connect(effect.input)
-      effect.connect(@context.destination)
+      effect.connect(@sourceGainNode)
 
   silenceEffects: ->
 
@@ -110,20 +137,22 @@ class AudioBoss
 
   setEffect: (effectName, v1, v2) ->
     
+    @silenceEffects()
+
     if effectName is 'overdrive'
       @effects[effectName].bypass = false
       @effects[effectName].drive = v1
       @effects[effectName].curveAmount = v2
 
-    if effectName is 'overdrive'
+    if effectName is 'delay'
       @effects[effectName].bypass = false
       @effects[effectName].feedback = v1
-      @effects[effectName].delayTime = v2
+      @effects[effectName].delayTime = v2*1000
 
     if effectName is 'chorus'
       @effects[effectName].bypass = false
       @effects[effectName].rate = v1*20
-      @effects[effectName].feedback = v2
+      @effects[effectName].feedback = Math.min(v2, 0.95)
 
     if effectName is 'tremolo'
       @effects[effectName].bypass = false
