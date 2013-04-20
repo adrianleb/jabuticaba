@@ -12,7 +12,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     'click #join-room': 'joinRoom'
     'click #generate-sound': 'generateSound'
 
-  roomName: 'room-9'
+  roomName: 'room-14'
 
   initialize: ->    
     @incommingContext = new webkitAudioContext()
@@ -33,7 +33,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       @$('#messages').append(msg)
 
       # https://github.com/danguer/blog-examples/blob/master/js/base64-binary.js 
-      d = Base64Binary.decodeArrayBuffer(sound)
+      d = Base64Binary.decodeArrayBuffer(msg)
       console.log 'hai', d
       @callMe(d)
       
@@ -61,7 +61,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
   send: (e) ->
     nop e
-    cl('sending: ' + $('#msg').val())
+    # cl('sending: ' + $('#msg').val())
     @room.send($('#msg').val())
   
   openRoom: (e) ->
@@ -88,8 +88,14 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       msg = base64ArrayBuffer(e.inputBuffer.getChannelData(0).buffer)
 
       cl('sending: ' + msg)
+
       # send through the tubes
       @room.send(msg)
+
+      # just copy the data to the js node output
+      e.outputBuffer.getChannelData(0).set(e.inputBuffer.getChannelData(0))
+
+
 
     @o.start(0)
     
