@@ -38,6 +38,7 @@
     };
 
     Marcel.prototype.render = function() {
+      console.debug('rendorz');
       return this.$el.find('#container').append(this.template());
     };
 

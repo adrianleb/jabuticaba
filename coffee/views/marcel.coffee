@@ -30,6 +30,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
 
   render: ->
+    console.debug('rendorz')
     @$el.find('#container').append(@template())
 
 

@@ -8,6 +8,13 @@ class Jabuticaba.Views.Home extends Backbone.View
 
   initialize: ->
     console.debug('initialize')
+    @nodeList = new Jabuticaba.Views.NodeList()
+    @audioInterface = new Jabuticaba.Views.AudioInterface()
+    # @initAudioInterface()
+    # @initNodeList()
+
+
+  # initNodeList: ->
 
   render: ->
     @$el.find('#container').append(@template())
