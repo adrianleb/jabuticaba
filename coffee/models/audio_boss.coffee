@@ -4,10 +4,16 @@ class AudioBoss
 
   rootScales: 
     'aMinor': [21, 23, 24, 26, 28, 29, 31]
-
   scale: []
-
   source: false
+
+  instruments:
+    'brom': {ramps: {in:0.001, out:0.01}, osc1Type: 0, osc2Type: 2, mod: 0.2}
+    'blar': {ramps: {in:0.1, out:0.01}, osc1Type: 1, osc2Type: 1, mod: 0}
+    'piip': {ramps: {in:0.8, out:1}, osc1Type: 3, osc2Type: 2, mod: 5} 
+    'bumm': {ramps: {in:0.1, out:0.1}, osc1Type: 0, osc2Type: 0, mod: 0} 
+
+  currentInstrument: 'brom'
 
   initialize: ->
     @context = new webkitAudioContext()
@@ -21,6 +27,7 @@ class AudioBoss
     @initExtendedScale('aMinor')
     
     @initEvents() # Listen!
+    @setInstrument('brom')
 
   initOutput: ->
     @outGainNode = @context.createGainNode()
@@ -72,22 +79,26 @@ class AudioBoss
     $(window).on 'audio_gen_note_on', (e, data) =>
       freq = @floatToFreq(data['x'])
       @setOscFrequencies(freq)
-      @ramp(0.5-data['y']/2, 0.2)
+      @ramp(0.5-data['y']/2, 'in')
     
     $(window).on 'audio_gen_note_off', (e) =>
-      @ramp(0, 0.5)
+      @ramp(0, 'out')
 
     $(window).on 'octave', (e, data) =>
       @initExtendedScale('aMinor', data['octave'])
 
+    $(window).on 'instrument', (e, data) =>
+      @setInstrument(data['instrument'])
+
     $(window).on 'audio_mod', (e, data) =>
       @setEffect(data['mod_type'], data['x'], data['y'])
 
-  ramp: (value, length) ->
+  ramp: (value, type) ->
     now = @context.currentTime
     @oscGain.gain.cancelScheduledValues(now)
     @oscGain.gain.setValueAtTime(@oscGain.gain.value, now)
-    @oscGain.gain.linearRampToValueAtTime(value, now + length)
+    console.log(@instruments[@currentInstrument]['ramps'][type])
+    @oscGain.gain.linearRampToValueAtTime(value, now + @instruments[@currentInstrument]['ramps'][type])
 
   setOscFrequencies: (freq) ->
     @osc1.frequency.value = freq
@@ -103,9 +114,8 @@ class AudioBoss
   # of numbered notes and transforms them into 
   # a longer array of frequencies.
   initExtendedScale: (scale, octave=3) ->
+    octave = parseInt(octave)
     l = @rootScales[scale].length
-    
-    @scale=[]
     for v, i in @rootScales[scale]
       for j in [0..2]
         @scale[i+(j*l)] = Math.pow(2, ((v + (12*(j+octave)))-69)/12) * 440
@@ -179,5 +189,11 @@ class AudioBoss
       @effects[effectName].bypass = false
       @effects[effectName].rate = v1*8
       @effects[effectName].intensity = v2
+
+  setInstrument: (name)->
+    @currentInstrument = name
+    @osc1.type = @instruments[name]['osc1Type']
+    @osc2.type = @instruments[name]['osc2Type']
+    @oscOscGain.gain.value = @instruments[name]['mod']
 
 window.AudioBoss = new AudioBoss()
