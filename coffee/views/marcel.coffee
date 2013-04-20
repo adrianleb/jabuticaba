@@ -14,8 +14,12 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
   roomName: 'room-9'
 
-  initialize: ->
+  initialize: ->    
+    @incommingContext = new webkitAudioContext()
+    @outputContext = new webkitAudioContext()
+
     console.debug('init marcelzz')
+    console.log 'hai'
     @room = new DataChannel()
 
     @room.onopen = (user_id) =>
@@ -29,19 +33,31 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       @$('#messages').append(msg)
 
       # https://github.com/danguer/blog-examples/blob/master/js/base64-binary.js 
-      d = Base64Binary.decodeArrayBuffer(msg)
-      @incommingContext.decodeAudioData msg, (buffer) ->
-        @incommingBuffer = buffer
+      d = Base64Binary.decodeArrayBuffer(sound)
+      console.log 'hai', d
+      @callMe(d)
+      
 
     @render()
-
-    @incommingContext = new webkitAudioContext()
-    @outputContext = new webkitAudioContext()
 
     @incommingBuffer = null
 
   render: ->
-    @$el.append(@template())
+    @$el.html(@template())
+
+  callMe: (d) =>
+    console.log 'CALLLLL MEEWE'
+    @incommingContext.decodeAudioData d, ((buffer) =>
+      console.log 'income', buffer
+      inBuffer = buffer
+      mySource = @outputContext.createBufferSource()
+      mySource.buffer = inBuffer
+      mySource.connect(@outputContext.destination)
+      mySource.noteOn(0)
+
+    ), (err) =>
+      console.log err, 'ERRORRRRR'
+
 
   send: (e) ->
     nop e

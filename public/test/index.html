@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://alxgbsn.co.uk/offlinewebaudio/ -->
+<html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>Offline Audio Example</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Alex Gibson">
+<script src="./Offline Audio Example_files/ufo.js"></script>
+<script src="./Offline Audio Example_files/base64-binary.js"></script>
+<script type="text/javascript">
+
+var myAudioContext, mySource, myBuffer;
+
+if ('AudioContext' in window) {
+	myAudioContext = new AudioContext();
+} else if ('webkitAudioContext' in window) {
+	myAudioContext = new webkitAudioContext();
+} else {
+	alert('Your browser does not support yet Web Audio API');
+}
+
+function play () {
+
+	mySource = myAudioContext.createBufferSource();
+	mySource.buffer = myBuffer;
+	mySource.connect(myAudioContext.destination);
+
+	if ('AudioContext' in window) {
+		mySource.start(0);
+	} else if ('webkitAudioContext' in window) {
+		mySource.noteOn(0);
+	} 
+	
+}
+
+var load = (function (url) {
+console.log(url, sound);
+	var arrayBuff = Base64Binary.decodeArrayBuffer(sound);
+
+	myAudioContext.decodeAudioData(arrayBuff, function(audioData) {
+		myBuffer = audioData;
+	});
+	
+}());
+
+</script>
+</head>
+
+<body>
+<h1>Offline Web Audio Demo</h1>
+<p>The sound in this demo is stored as a base64 string and converted back to audio data for playback via the Web Audio API. This enables mobile browsers such as iOS6 Safari to cache audio offline for playback.</p>
+<p>Press play below:</p>
+<button onclick="play();" style="height: 44px; width: 75px;">Play</button>
+<p>Fork on <a href="https://github.com/alexgibson/offlinewebaudio">GitHub</a></p>
+<p>Demo by: <a href="http://alxgbsn.co.uk/">Alex Gibson</a></p>
+
+</body></html>
