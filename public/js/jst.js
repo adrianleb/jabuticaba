@@ -205,7 +205,7 @@ JST['node_list/wrap'] = function(__obj) {
   }
   (function() {
     (function() {
-      var i, node, _i, _len, _ref;
+      var node, _i, _len, _ref;
     
       __out.push('<p>IM A LIST OF USER NODES OK?</p>\n<div class="nodes">\n  ');
     
@@ -214,11 +214,15 @@ JST['node_list/wrap'] = function(__obj) {
       __out.push('\n  ');
     
       _ref = this.activeNodes;
-      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-        node = _ref[i];
-        __out.push('\n\n    <div class="node" data-id="');
-        __out.push(__sanitize(i));
-        __out.push('">\n      <p>im a node...</p>\n    </div>\n  ');
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        node = _ref[_i];
+        __out.push('\n    ');
+        console.log(node);
+        __out.push('\n    <div class="node" data-id="');
+        __out.push(__sanitize(node.id));
+        __out.push('">\n      <p>');
+        __out.push(__sanitize(node.alias));
+        __out.push('</p>\n    </div>\n  ');
       }
     
       __out.push('\n</div>');
