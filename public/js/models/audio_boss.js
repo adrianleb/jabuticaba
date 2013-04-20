@@ -6,16 +6,80 @@
 
     function AudioBoss() {}
 
-    AudioBoss.prototype.dsp = null;
+    AudioBoss.prototype.effectSlots = [null, null];
+
+    AudioBoss.prototype.scales = {
+      'aMinor': [33, 35, 36, 38, 40, 41, 43]
+    };
 
     AudioBoss.prototype.initialize = function() {
-      return this.dsp = audioLib.Sink(function(sampleBuffer) {
-        return console.log('audioLib started');
-      });
+      this.context = new webkitAudioContext();
+      this.osc1 = this.context.createOscillator();
+      this.osc1.type = 0;
+      this.osc1.frequency.value = 0;
+      this.osc1.connect(this.context.destination);
+      this.osc1.noteOn(0);
+      this.osc2 = this.context.createOscillator();
+      this.osc2.type = 1;
+      this.osc2.frequency.value = 0;
+      this.osc2.connect(this.context.destination);
+      this.osc2.noteOn(0);
+      this.tuna = new Tuna(this.context);
+      return this.initExtendedScale('aMinor');
+    };
+
+    AudioBoss.prototype.floatToFreq = function(f, scale) {
+      if (scale == null) {
+        scale = 'aMinor';
+      }
+      return this.scales[scale][Math.round(f * this.scales[scale])];
+    };
+
+    AudioBoss.prototype.initExtendedScale = function(scale) {
+      var i, j, l, v, _i, _len, _ref, _results;
+      l = this.scales[scale].length;
+      _ref = this.scales[scale];
+      _results = [];
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+        v = _ref[i];
+        _results.push((function() {
+          var _j, _results1;
+          _results1 = [];
+          for (j = _j = 0; _j <= 5; j = ++_j) {
+            _results1.push(this.scales[scale][i + (j * l)] = Math.pow(2, ((v + (12 * j)) - 69) / 12) * 440);
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
+    AudioBoss.prototype.setEffect = function(slot, effectName, amount) {
+      if (!effectName) {
+
+      } else {
+        if (effectName === 'overdrive') {
+          return effectSlots[slot] = new this.tuna.Overdrive({
+            outputGain: 0.6,
+            drive: amount,
+            curveAmount: 0.4,
+            algorithmIndex: 2
+          });
+        } else if (effectName === 'delay') {
+          return effectSlots[slot] = new this.tuna.Delay({
+            feedback: amount,
+            delayTime: 250,
+            wetLevel: 0.5,
+            dryLevel: 0.5
+          });
+        }
+      }
     };
 
     return AudioBoss;
 
   })();
+
+  window.AudioBoss = new AudioBoss();
 
 }).call(this);
