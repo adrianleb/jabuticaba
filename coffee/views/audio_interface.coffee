@@ -53,9 +53,10 @@ class Jabuticaba.Views.AudioInterface extends Backbone.View
     eX = e.offsetX
     eY = e.offsetY
     coord = {x: eX / elW, y: eY / elH }
-    @$(e.currentTarget).find('.audio_module_point').css({top:(coord.y * 100)+ "%", left:(coord.x * 100) + "%"})
-    if callback?
-      callback coord
+    if coord.x <= 1 and coord.y <= 1
+      @$(e.currentTarget).find('.audio_module_point').css({top:(coord.y * 100)+ "%", left:(coord.x * 100) + "%"})
+      if callback?
+        callback coord
 
 
 
