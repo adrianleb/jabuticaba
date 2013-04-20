@@ -20,11 +20,11 @@
         id: '1',
         alias: 'ur mom'
       }, {
-        id: '1',
-        alias: 'ur mom'
+        id: '2',
+        alias: 'ur dad'
       }, {
-        id: '1',
-        alias: 'ur mom'
+        id: '3',
+        alias: 'ur uncle'
       }
     ];
 

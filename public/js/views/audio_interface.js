@@ -17,7 +17,9 @@
 
     AudioInterface.prototype.events = {
       "mousedown #audio-generator": "noteOn",
-      "mouseup #audio-generator": "noteOff"
+      "mouseup #audio-generator": "noteOff",
+      "mousemove #audio-modulator": "modulatorDragger",
+      "mousedown #audio-modulator": "modulatorDragger"
     };
 
     AudioInterface.prototype.initialize = function() {
@@ -30,6 +32,33 @@
     };
 
     AudioInterface.prototype.noteOn = function(e) {
+      var _this = this;
+      return this.setModulePointCoord(e, function(coord) {
+        if (!((coord.x === 0) && (coord.y === 0))) {
+          $(window).trigger('audio_gen_note_on', coord);
+          return console.log('happy gen coord callback', coord);
+        }
+      });
+    };
+
+    AudioInterface.prototype.noteOff = function(e) {
+      return $(window).trigger('audio_gen_note_off');
+    };
+
+    AudioInterface.prototype.modulatorDragger = function(e) {
+      var _this = this;
+      if (e.which === 1) {
+        console.log('goferit');
+        return this.setModulePointCoord(e, function(coord) {
+          if (!((coord.x === 0) && (coord.y === 0))) {
+            $(window).trigger('audio_mod', coord);
+            return console.log('happy mod coord callback', coord);
+          }
+        });
+      }
+    };
+
+    AudioInterface.prototype.setModulePointCoord = function(e, callback) {
       var coord, eX, eY, elH, elW;
       elW = e.currentTarget.clientWidth;
       elH = e.currentTarget.clientHeight;
@@ -39,16 +68,13 @@
         x: eX / elW,
         y: eY / elH
       };
-      console.log(coord);
-      $(window).trigger('audio_gen_note_on', coord);
-      return this.$(e.currentTarget).find('.audio_module_point').css({
+      this.$(e.currentTarget).find('.audio_module_point').css({
         top: (coord.y * 100) + "%",
         left: (coord.x * 100) + "%"
       });
-    };
-
-    AudioInterface.prototype.noteOff = function(e) {
-      return $(window).trigger('audio_gen_note_off');
+      if (callback != null) {
+        return callback(coord);
+      }
     };
 
     return AudioInterface;
