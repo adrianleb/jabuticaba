@@ -21,6 +21,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     console.debug('init marcelzz')
     console.log 'hai'
     @room = new DataChannel()
+    @peerCon2()
 
     @room.onopen = (user_id) =>
       console.log('onopen: ' + user_id)
@@ -29,16 +30,16 @@ class Jabuticaba.Views.Marcel extends Backbone.View
       console.log('onUserLeft: ' + user_id)
 
 
-    @incommingBuffer = @incommingContext.createBufferSource()
-    @incommingBuffer.connect(@outputContext.destination)
-    @incommingBuffer.buffer = 
-    @incommingBuffer.start(0)
+    # @incommingBuffer = @incommingContext.createBufferSource()
+    # @incommingBuffer.connect(@outputContext.destination)
+    # @incommingBuffer.buffer = 
+    # @incommingBuffer.start(0)
 
 
-    @incommingContext.decodeAudioData @incommingBuffer, ((buffer) =>
-      console.log 'income', buffer
-    ), (err) =>
-      console.log err, 'ERRORRRRR'
+    # @incommingContext.decodeAudioData @incommingBuffer, ((buffer) =>
+    #   console.log 'income', buffer
+    # ), (err) =>
+    #   console.log err, 'ERRORRRRR'
 
     
     @room.onmessage = (msg) =>
@@ -87,7 +88,7 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     console.log 'pa'
     # create gain
     @g = @outputContext.createGainNode()
-    @g.gain = 0 # !!!!
+    @g.gain = 1 # !!!!
     console.log 'ra'
     # create context.createMediaStreamDestination()
     @peer = @outputContext.createMediaStreamDestination()
@@ -95,10 +96,14 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     #plug 
     @o.connect(@g)
     @g.connect @peer
-    peerConnection.addStream(@peer.stream)
+    @g.connect @outputContext.destination
+    @pc1.addStream @peer.stream
+    @o.noteOn(0)
+
+    # @createPeerConnection()
+    # peerConnection.addStream(@peer.stream)
     # @g.connect(@outputContext.destination)
-    console.log 'yolo', peerConnection
-    @o.start(0)
+    console.log 'yolo', @pc1
     # @js = @outputContext.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
     # @o.frequency.value = 440
 
@@ -124,6 +129,87 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     # we need to send it somewhere or else nothing runs.
 
     # @js.connect(@g)
+
+
+  createPeerConnection: ->
+    @pc1 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
+    @pc1.onicecandidate = (e) ->
+      if !marcel.pc1 or !e or !e.candidate
+        return false
+      console.debug "onicecandidate"
+
+      candidate = e.candidate
+      marcel.pc1.addIceCandidate new RTCIceCandidate(
+        sdpMLineIndex: candidate.sdpMLineIndex
+        candidate: candidate.candidate
+      )
+
+    @pc1.onaddstream = ->
+      console.debug "onaddstream"
+      
+    gotDescription1 = (desc) =>
+      console.log 'hai description', desc
+      @pc1.setLocalDescription desc
+      @offer = desc
+
+      # trace "Offer from pc1 \n" + desc.sdp
+    @pc1.createOffer gotDescription1, null, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true } }
+    console.log @offer, 'offer'
+
+  connectToPeerConnection: ->
+    console.log @offer
+    desc = new RTCSessionDescription @offer
+    gotDescription2 = (desc) =>
+      # @pc1.setLocalDescription desc
+      @pc1.setRemoteDescription desc
+    @pc1.createAnswer gotDescription2, null, { 'mandatory': { 'OfferToReceiveAudio': true, 'OfferToReceiveVideo': true }}
+
+
+
+  peerCon2: ->
+    @pc1 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
+    @pc2 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
+
+    @pc2.onaddstream = ->
+      console.debug "onaddstream"
+
+    @pc1.onicecandidate = (candidate) =>
+      # console.log candidate, 'cand?'
+      @pc2.addIceCandidate(candidate)
+    @pc2.onicecandidate = (candidate) =>
+      # console.log candidate, 'cand2?'
+      @pc1.addIceCandidate(candidate)
+
+
+    @pc1.createOffer(onOfferCreated, rtcOnError)
+
+window.rtcOnError = (err) ->
+  window.alert err.message
+
+window.onPc1RemoteDescriptionSet = () =>
+  window.alert('Yay, we finished signaling offers and answers')
+
+window.onPc2LocalDescriptionSet = () =>
+# // after this function returns, you'll start getting icecandidate events on pc2
+  marcel.pc1.setRemoteDescription(marcel.answer, onPc1RemoteDescriptionSet, rtcOnError);
+
+
+window.onOfferCreated = (description) =>
+  console.log 'desc?', description
+  marcel.offer = description.sdp
+  marcel.pc1.setLocalDescription marcel.offer, onPc1LocalDescriptionSet, rtcOnError
+
+window.onAnswerCreated = (description) =>
+  marcel.answer = description.sdp
+  marcel.pc2.setLocalDescription(marcel.answer, onPc2LocalDescriptionSet, rtcOnError);
+
+window.onPc2RemoteDescriptionSet = () =>
+  marcel.pc2.createAnswer(onAnswerCreated, rtcOnError)
+
+
+window.onPc1LocalDescriptionSet = =>
+  # after this function returns, pc1 will start firing icecandidate events
+  marcel.pc2.setRemoteDescription marcel.offer, onPc2RemoteDescriptionSet, rtcOnError
 
 
 
