@@ -109,21 +109,7 @@
       return this.oscOscGain.connect(this.osc1.frequency);
     };
 
-    AudioBoss.prototype.initListener = function() {
-      var _this = this;
-      this.peer = new Peer({
-        key: 'sbi86lbw0g1d1jor'
-      });
-      this.conn = this.peer.connect('kekeke');
-      this.js = this.context.createScriptProcessor(256, 1, 1);
-      this.js.onaudioprocess = function(e) {
-        var msg;
-        cl('onaudioprocess');
-        msg = e.inputBuffer.getChannelData(0).buffer;
-        return _this.conn.send(msg);
-      };
-      return this.js.connect(this.outGainNode);
-    };
+    AudioBoss.prototype.initListener = function() {};
 
     AudioBoss.prototype.initEvents = function() {
       var _this = this;
