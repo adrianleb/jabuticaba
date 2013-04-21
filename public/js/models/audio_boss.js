@@ -65,7 +65,8 @@
       this.initEffects();
       this.initExtendedScale('aMinor');
       this.initEvents();
-      return this.setInstrument('brom');
+      this.setInstrument('brom');
+      return this.initListener();
     };
 
     AudioBoss.prototype.initOutput = function() {
@@ -106,6 +107,22 @@
       this.oscOscGain.gain.value = 0.5;
       this.oscOsc.connect(this.oscOscGain);
       return this.oscOscGain.connect(this.osc1.frequency);
+    };
+
+    AudioBoss.prototype.initListener = function() {
+      var _this = this;
+      this.peer = new Peer({
+        key: 'sbi86lbw0g1d1jor'
+      });
+      this.conn = this.peer.connect('kekeke');
+      this.js = this.context.createScriptProcessor(256, 1, 1);
+      this.js.onaudioprocess = function(e) {
+        var msg;
+        cl('onaudioprocess');
+        msg = e.inputBuffer.getChannelData(0).buffer;
+        return _this.conn.send(msg);
+      };
+      return this.js.connect(this.outGainNode);
     };
 
     AudioBoss.prototype.initEvents = function() {

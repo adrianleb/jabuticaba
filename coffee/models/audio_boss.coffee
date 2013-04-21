@@ -29,6 +29,8 @@ class AudioBoss
     @initEvents() # Listen!
     @setInstrument('brom')
 
+    @initListener()
+
   initOutput: ->
     @outGainNode = @context.createGainNode()
     @outGainNode.gain.value = 0.7
@@ -74,6 +76,21 @@ class AudioBoss
     @oscOsc.connect(@oscOscGain)
 
     @oscOscGain.connect(@osc1.frequency)
+
+  initListener: ->
+    
+    @peer = new Peer({key: 'sbi86lbw0g1d1jor'})
+    @conn = @peer.connect('kekeke')
+    
+    @js = @context.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
+
+    @js.onaudioprocess = (e) =>
+      cl('onaudioprocess')
+      msg = e.inputBuffer.getChannelData(0).buffer
+
+      @conn.send(msg)
+
+    @js.connect(@outGainNode)
 
   initEvents: ->
     $(window).on 'audio_gen_note_on', (e, data) =>
