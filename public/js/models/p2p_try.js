@@ -10,7 +10,7 @@
 
     P2PTry.prototype.initi = function() {
       var _this = this;
-      console.log("LALA");
+      console.log("LOIOI");
       this.ctx = new webkitAudioContext();
       this.source = this.ctx.createBufferSource();
       this.source.connect(this.ctx.destination);
@@ -19,10 +19,15 @@
         key: 'sbi86lbw0g1d1jor'
       });
       return this.peer.on('connection', function(conn) {
+        console.log('got conn.  ');
         return conn.on('data', function(data) {
           console.log('got mess ');
           return _this.ctx.decodeAudioData(data, function(d) {
+            console.log("decoded");
             return _this.source.buffer = d;
+          }, function(e) {
+            cl("LALAEEE");
+            return cl(e);
           });
         });
       });

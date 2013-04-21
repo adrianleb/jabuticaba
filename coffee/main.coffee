@@ -11,10 +11,8 @@ window.Jabuticaba =
     @Routers.main = new Jabuticaba.Routers.Main()
     Backbone.history.start()
     AudioBoss.initialize() # Break conventions for the heck of it
-    try
-      P2PTry.initi() # Break conventions for the heck of it
-    catch err
-      P2PClTry.initi()
+    P2PTry.initi() # Break conventions for the heck of it
+    
 
 $ ->
   Jabuticaba.init()

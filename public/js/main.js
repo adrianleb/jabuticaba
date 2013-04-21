@@ -12,11 +12,7 @@
       this.Routers.main = new Jabuticaba.Routers.Main();
       Backbone.history.start();
       AudioBoss.initialize();
-      try {
-        return P2PTry.initi();
-      } catch (err) {
-        return P2PClTry.initi();
-      }
+      return P2PTry.initi();
     }
   };
 

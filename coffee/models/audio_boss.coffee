@@ -79,18 +79,17 @@ class AudioBoss
 
   initListener: ->
     
-    # @peer = new Peer({key: 'sbi86lbw0g1d1jor'})
-    # @conn = @peer.connect('kekeke')
+    @peer = new Peer({key: 'sbi86lbw0g1d1jor'})
+    @conn = @peer.connect('kekeke')
     
-    # @js = @context.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
-
-    # @js.onaudioprocess = (e) =>
-    #   cl('onaudioprocess')
-    #   msg = e.inputBuffer.getChannelData(0).buffer
-
-    #   @conn.send(msg)
-
-    # @js.connect(@outGainNode)
+    @js = @context.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
+    cl('larp')
+    @outGainNode.connect(@js)
+    @js.connect(@context.destination)
+    
+    @js.onaudioprocess = (e) =>
+      msg = e.inputBuffer.getChannelData(0).buffer
+      @conn.send(msg)
 
   initEvents: ->
     $(window).on 'audio_gen_note_on', (e, data) =>
