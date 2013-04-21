@@ -85,9 +85,9 @@
       this.o.connect(this.g);
       this.g.connect(this.peer);
       this.g.connect(this.outputContext.destination);
-      this.pc1.addStream(this.peer.stream);
+      window.pc1.addStream(this.peer.stream);
       this.o.noteOn(0);
-      return console.log('yolo', this.pc1);
+      return console.log('yolo', window.pc1);
     };
 
     Marcel.prototype.createPeerConnection = function() {
@@ -102,12 +102,12 @@
       });
       this.pc1.onicecandidate = function(e) {
         var candidate;
-        if (!marcel.pc1 || !e || !e.candidate) {
+        if (!window.pc1 || !e || !e.candidate) {
           return false;
         }
         console.debug("onicecandidate");
         candidate = e.candidate;
-        return marcel.pc1.addIceCandidate(new RTCIceCandidate({
+        return window.pc1.addIceCandidate(new RTCIceCandidate({
           sdpMLineIndex: candidate.sdpMLineIndex,
           candidate: candidate.candidate
         }));
@@ -145,33 +145,7 @@
       });
     };
 
-    Marcel.prototype.peerCon2 = function() {
-      var _this = this;
-      this.pc1 = new webkitRTCPeerConnection({
-        iceServers: [
-          {
-            url: "stun:stun.l.google.com:19302"
-          }
-        ]
-      });
-      this.pc2 = new webkitRTCPeerConnection({
-        iceServers: [
-          {
-            url: "stun:stun.l.google.com:19302"
-          }
-        ]
-      });
-      this.pc2.onaddstream = function() {
-        return console.debug("onaddstream");
-      };
-      this.pc1.onicecandidate = function(candidate) {
-        return _this.pc2.addIceCandidate(candidate);
-      };
-      this.pc2.onicecandidate = function(candidate) {
-        return _this.pc1.addIceCandidate(candidate);
-      };
-      return this.pc1.createOffer(onOfferCreated, rtcOnError);
-    };
+    Marcel.prototype.peerCon2 = function() {};
 
     return Marcel;
 
@@ -181,31 +155,80 @@
     return window.alert(err.message);
   };
 
-  window.onPc1RemoteDescriptionSet = function() {
-    return window.alert('Yay, we finished signaling offers and answers');
-  };
+  window.pc1 = new webkitRTCPeerConnection({
+    iceServers: [
+      {
+        url: "stun:stun.l.google.com:19302"
+      }
+    ]
+  });
 
-  window.onPc2LocalDescriptionSet = function() {
-    return marcel.pc1.setRemoteDescription(marcel.answer, onPc1RemoteDescriptionSet, rtcOnError);
-  };
+  window.pc2 = new webkitRTCPeerConnection({
+    iceServers: [
+      {
+        url: "stun:stun.l.google.com:19302"
+      }
+    ]
+  });
 
   window.onOfferCreated = function(description) {
     console.log('desc?', description);
-    marcel.offer = description.sdp;
-    return marcel.pc1.setLocalDescription(marcel.offer, onPc1LocalDescriptionSet, rtcOnError);
+    window.offer = description;
+    return window.pc1.setLocalDescription(window.offer, onPc1LocalDescriptionSet, rtcOnError);
+  };
+
+  window.pc2.onaddstream = function() {
+    return console.debug("onaddstream");
+  };
+
+  window.pc1.onaddstream = function() {
+    return console.debug("onaddstream 1");
+  };
+
+  window.pc1.onicecandidate = function(candidate) {
+    var cand;
+    console.log(candidate, 'cand?');
+    cand = new RTCIceCandidate(candidate);
+    console.log(cand, 'CAND', cand.candidate);
+    if (cand.candidate != null) {
+      return window.pc2.addIceCandidate(cand);
+    }
+  };
+
+  window.pc2.onicecandidate = function(candidate) {
+    var cand;
+    console.log(candidate, 'cand2?');
+    cand = new RTCIceCandidate(candidate);
+    if (cand.candidate != null) {
+      return window.pc1.addIceCandidate(cand);
+    }
+  };
+
+  window.pc1.onconnecting = function(e) {
+    return cl('CONNECTION');
+  };
+
+  window.pc1.createOffer(onOfferCreated, rtcOnError);
+
+  window.onPc1RemoteDescriptionSet = function() {
+    return cl('Yay, we finished signaling offers and answers');
+  };
+
+  window.onPc2LocalDescriptionSet = function() {
+    return window.pc1.setRemoteDescription(window.answer, onPc1RemoteDescriptionSet, rtcOnError);
   };
 
   window.onAnswerCreated = function(description) {
-    marcel.answer = description.sdp;
-    return marcel.pc2.setLocalDescription(marcel.answer, onPc2LocalDescriptionSet, rtcOnError);
+    window.answer = description;
+    return window.pc2.setLocalDescription(window.answer, onPc2LocalDescriptionSet, rtcOnError);
   };
 
   window.onPc2RemoteDescriptionSet = function() {
-    return marcel.pc2.createAnswer(onAnswerCreated, rtcOnError);
+    return window.pc2.createAnswer(onAnswerCreated, rtcOnError);
   };
 
   window.onPc1LocalDescriptionSet = function() {
-    return marcel.pc2.setRemoteDescription(marcel.offer, onPc2RemoteDescriptionSet, rtcOnError);
+    return window.pc2.setRemoteDescription(window.offer, onPc2RemoteDescriptionSet, rtcOnError);
   };
 
 }).call(this);

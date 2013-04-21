@@ -97,13 +97,13 @@ class Jabuticaba.Views.Marcel extends Backbone.View
     @o.connect(@g)
     @g.connect @peer
     @g.connect @outputContext.destination
-    @pc1.addStream @peer.stream
+    window.pc1.addStream @peer.stream
     @o.noteOn(0)
 
     # @createPeerConnection()
     # peerConnection.addStream(@peer.stream)
     # @g.connect(@outputContext.destination)
-    console.log 'yolo', @pc1
+    console.log 'yolo', window.pc1
     # @js = @outputContext.createScriptProcessor(256, 1, 1) # (bufferSize, numberOfInputChannels, numberOfOutputChannels)
     # @o.frequency.value = 440
 
@@ -134,12 +134,12 @@ class Jabuticaba.Views.Marcel extends Backbone.View
   createPeerConnection: ->
     @pc1 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
     @pc1.onicecandidate = (e) ->
-      if !marcel.pc1 or !e or !e.candidate
+      if !window.pc1 or !e or !e.candidate
         return false
       console.debug "onicecandidate"
 
       candidate = e.candidate
-      marcel.pc1.addIceCandidate new RTCIceCandidate(
+      window.pc1.addIceCandidate new RTCIceCandidate(
         sdpMLineIndex: candidate.sdpMLineIndex
         candidate: candidate.candidate
       )
@@ -167,49 +167,64 @@ class Jabuticaba.Views.Marcel extends Backbone.View
 
 
   peerCon2: ->
-    @pc1 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
-    @pc2 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
-
-    @pc2.onaddstream = ->
-      console.debug "onaddstream"
-
-    @pc1.onicecandidate = (candidate) =>
-      # console.log candidate, 'cand?'
-      @pc2.addIceCandidate(candidate)
-    @pc2.onicecandidate = (candidate) =>
-      # console.log candidate, 'cand2?'
-      @pc1.addIceCandidate(candidate)
-
-
-    @pc1.createOffer(onOfferCreated, rtcOnError)
-
 window.rtcOnError = (err) ->
   window.alert err.message
 
-window.onPc1RemoteDescriptionSet = () =>
-  window.alert('Yay, we finished signaling offers and answers')
 
-window.onPc2LocalDescriptionSet = () =>
-# // after this function returns, you'll start getting icecandidate events on pc2
-  marcel.pc1.setRemoteDescription(marcel.answer, onPc1RemoteDescriptionSet, rtcOnError);
+window.pc1 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
+window.pc2 = new webkitRTCPeerConnection(iceServers: [url: "stun:stun.l.google.com:19302"])
 
-
-window.onOfferCreated = (description) =>
+window.onOfferCreated = (description) ->
   console.log 'desc?', description
-  marcel.offer = description.sdp
-  marcel.pc1.setLocalDescription marcel.offer, onPc1LocalDescriptionSet, rtcOnError
-
-window.onAnswerCreated = (description) =>
-  marcel.answer = description.sdp
-  marcel.pc2.setLocalDescription(marcel.answer, onPc2LocalDescriptionSet, rtcOnError);
-
-window.onPc2RemoteDescriptionSet = () =>
-  marcel.pc2.createAnswer(onAnswerCreated, rtcOnError)
+  window.offer = description
+  window.pc1.setLocalDescription window.offer, onPc1LocalDescriptionSet, rtcOnError
 
 
-window.onPc1LocalDescriptionSet = =>
+window.pc2.onaddstream = ->
+  console.debug "onaddstream"
+
+window.pc1.onaddstream = ->
+  console.debug "onaddstream 1"
+
+
+window.pc1.onicecandidate = (candidate) =>
+  console.log candidate, 'cand?'
+  cand = new RTCIceCandidate(candidate)
+  console.log cand, 'CAND', cand.candidate
+  if cand.candidate?
+    window.pc2.addIceCandidate( cand )
+
+
+window.pc2.onicecandidate = (candidate) =>
+  console.log candidate, 'cand2?'
+  cand = new RTCIceCandidate(candidate)
+  if cand.candidate?
+    window.pc1.addIceCandidate( cand )
+
+window.pc1.onconnecting = (e) => cl 'CONNECTION'
+
+window.pc1.createOffer(onOfferCreated, rtcOnError)
+
+window.onPc1RemoteDescriptionSet = () ->
+  cl('Yay, we finished signaling offers and answers')
+
+window.onPc2LocalDescriptionSet = () ->
+# // after this function returns, you'll start getting icecandidate events on pc2
+  window.pc1.setRemoteDescription(window.answer, onPc1RemoteDescriptionSet, rtcOnError);
+
+
+window.onAnswerCreated = (description) ->
+  window.answer = description
+  window.pc2.setLocalDescription(window.answer, onPc2LocalDescriptionSet, rtcOnError);
+
+window.onPc2RemoteDescriptionSet = () ->
+  window.pc2.createAnswer(onAnswerCreated, rtcOnError)
+
+
+window.onPc1LocalDescriptionSet = ->
   # after this function returns, pc1 will start firing icecandidate events
-  marcel.pc2.setRemoteDescription marcel.offer, onPc2RemoteDescriptionSet, rtcOnError
+  window.pc2.setRemoteDescription window.offer, onPc2RemoteDescriptionSet, rtcOnError
+
 
 
 
